@@ -40,7 +40,7 @@ public class Player extends Entity {
 		bdef.type = BodyType.DynamicBody;
 		body = world.createBody(bdef);
 		PolygonShape shape = new PolygonShape();
-		shape.setAsBox(8 / PPM, 14 / PPM);
+		shape.setAsBox(20 / PPM, 14 / PPM);
 		FixtureDef fdef = new FixtureDef();
 		fdef.shape = shape;
 		body.createFixture(fdef).setUserData(body);
