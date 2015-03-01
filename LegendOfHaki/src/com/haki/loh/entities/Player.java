@@ -36,7 +36,7 @@ public class Player extends Entity {
 
 		world = state.getWorld();
 		BodyDef bdef = new BodyDef();
-		bdef.position.set(20 / PPM, 200 / PPM);
+		bdef.position.set(100 / PPM, 200 / PPM);
 		bdef.type = BodyType.DynamicBody;
 		body = world.createBody(bdef);
 		PolygonShape shape = new PolygonShape();
