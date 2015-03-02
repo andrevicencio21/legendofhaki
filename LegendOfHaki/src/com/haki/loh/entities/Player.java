@@ -32,8 +32,8 @@ public class Player extends Entity {
 		super(state);
 		this.batch = state.getBatch();
 		// Load Texture and SoundAssets
-		loadAssets();
-
+		loadAssets()1;2112
+		
 		world = state.getWorld();
 		BodyDef bdef = new BodyDef();
 		bdef.position.set(100 / PPM, 200 / PPM);
