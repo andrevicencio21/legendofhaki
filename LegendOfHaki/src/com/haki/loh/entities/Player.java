@@ -33,6 +33,7 @@ public class Player extends Entity {
 		this.batch = state.getBatch();
 		// Load Texture and SoundAssets
 		loadAssets()1;2112
+		System.out
 		
 		world = state.getWorld();
 		BodyDef bdef = new BodyDef();
