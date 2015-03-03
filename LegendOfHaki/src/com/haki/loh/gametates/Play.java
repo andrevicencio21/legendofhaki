@@ -3,11 +3,12 @@ package com.haki.loh.gametates;
 import static com.haki.loh.handlers.B2DVariables.PPM;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapObject;
-import com.badlogic.gdx.maps.objects.EllipseMapObject;
 import com.badlogic.gdx.maps.objects.PolygonMapObject;
 import com.badlogic.gdx.maps.objects.PolylineMapObject;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
@@ -28,8 +29,10 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 import com.haki.loh.entities.Entity;
 import com.haki.loh.entities.Player;
+import com.haki.loh.entities.TestEnemy;
 import com.haki.loh.handlers.GameStateManager;
 import com.haki.loh.handlers.MyContactListener;
+import com.haki.loh.handlers.MyInput;
 import com.haki.loh.main.Game;
 
 public class Play extends GameState {
@@ -39,18 +42,22 @@ public class Play extends GameState {
 	private TiledMap tiledMap;
 	private TiledMapRenderer tmr;
 	private Player player;
-	private boolean debugMode = false;
+	private boolean debugMode = true;
+	private BitmapFont debugText;
 
 	public Play(GameStateManager gsm) {
 		super(gsm);
 		debugRenderer = new Box2DDebugRenderer();
 		entityArray = new Array<Entity>();
+		debugText = new BitmapFont();
+		debugText.setColor(Color.WHITE);
 
 		createWorld();
 		createLevel();
 		createPlayer();
+		entityArray.add(new TestEnemy(this));
 
-		// set up box 2d cam
+		// set up box 2d camera
 		b2DCam = new OrthographicCamera();
 		b2DCam.setToOrtho(false, Game.V_WIDTH / PPM, Game.V_HEIGHT / PPM);
 
@@ -61,6 +68,10 @@ public class Play extends GameState {
 	@Override
 	public void handleInput() {
 		player.handleInput();
+
+		if (MyInput.isPressed(MyInput.ESCAPE)) {
+			System.exit(0);
+		}
 	}
 
 	@Override
@@ -110,7 +121,16 @@ public class Play extends GameState {
 		for (int i = 0; i < entityArray.size; i++) {
 			entityArray.get(i).render();
 		}
+
+		if (debugMode) {
+			batch.setProjectionMatrix(hudCamera.combined);
+	
+			debugText.draw(batch, "FPS: " + Gdx.graphics.getFramesPerSecond(),
+					40, 200);
+			
+		}
 		batch.end();
+		
 
 	}
 

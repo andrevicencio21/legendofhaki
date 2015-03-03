@@ -44,18 +44,19 @@ public class Kunai extends Entity {
 
 	public void createKunai() {
 		BodyDef bdef = new BodyDef();
-		if (isForward) {
-			bdef.position.set(
-					entityCaller.getBody().getPosition().x + 15 / PPM,
-					entityCaller.getBody().getPosition().y + 5 / PPM);
-		}
-		if (!isForward) {
-			bdef.position.set(entityCaller.getBody().getPosition().x - 3 / PPM,
-					entityCaller.getBody().getPosition().y + 5 / PPM);
-		}
-		bdef.type = BodyType.DynamicBody;
-		bdef.bullet = true;
+
 		if (System.currentTimeMillis() - timeCalled >= kunaiDelay) {
+			if (isForward) {
+				bdef.position.set(
+						entityCaller.getBody().getPosition().x + 15 / PPM,
+						entityCaller.getBody().getPosition().y + 5 / PPM);
+			}
+			if (!isForward) {
+				bdef.position.set(entityCaller.getBody().getPosition().x - 3 / PPM,
+						entityCaller.getBody().getPosition().y + 5 / PPM);
+			}
+			bdef.type = BodyType.DynamicBody;
+			bdef.bullet = true;
 
 			PolygonShape shape = new PolygonShape();
 			shape.setAsBox(8 / PPM, 2 / PPM);

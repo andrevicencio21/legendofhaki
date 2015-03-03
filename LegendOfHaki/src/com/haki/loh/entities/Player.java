@@ -32,16 +32,15 @@ public class Player extends Entity {
 		super(state);
 		this.batch = state.getBatch();
 		// Load Texture and SoundAssets
-		loadAssets()1;2112
-		System.out
-		
+		loadAssets();
+
 		world = state.getWorld();
 		BodyDef bdef = new BodyDef();
 		bdef.position.set(100 / PPM, 200 / PPM);
 		bdef.type = BodyType.DynamicBody;
 		body = world.createBody(bdef);
 		PolygonShape shape = new PolygonShape();
-		shape.setAsBox(20 / PPM, 14 / PPM);
+		shape.setAsBox(8/ PPM, 14 / PPM);
 		FixtureDef fdef = new FixtureDef();
 		fdef.shape = shape;
 		body.createFixture(fdef).setUserData(body);
@@ -255,16 +254,20 @@ public class Player extends Entity {
 		if (linearVelocityX <= 0 && linearVelocityY != 0 && !isForward
 				&& isJumping)
 			spriteArrayToDraw = jumpLeft;
-		if (isThrowing && isOnGround && isForward && (System.currentTimeMillis() - throwTime) <= throwDuration) {
+		if (isThrowing && isOnGround && isForward
+				&& (System.currentTimeMillis() - throwTime) <= throwDuration) {
 			spriteArrayToDraw = throwRight;
 		}
-		if (isThrowing && isOnGround && !isForward && (System.currentTimeMillis() - throwTime) <= throwDuration) {
+		if (isThrowing && isOnGround && !isForward
+				&& (System.currentTimeMillis() - throwTime) <= throwDuration) {
 			spriteArrayToDraw = throwLeft;
 		}
-		if (isThrowing && isJumping && isForward && (System.currentTimeMillis() - throwTime) <= throwDuration) {
+		if (isThrowing && isJumping && isForward
+				&& (System.currentTimeMillis() - throwTime) <= throwDuration) {
 			spriteArrayToDraw = jumpThrowRight;
 		}
-		if (isThrowing && isJumping && !isForward && (System.currentTimeMillis() - throwTime) <= throwDuration) {
+		if (isThrowing && isJumping && !isForward
+				&& (System.currentTimeMillis() - throwTime) <= throwDuration) {
 			spriteArrayToDraw = jumpThrowLeft;
 		}
 		if (previousSpriteArrayToDraw != spriteArrayToDraw) {

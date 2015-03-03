@@ -12,6 +12,7 @@ public class MyInput {
 	public static final int RIGHT = 5;
 	public static final int JUMP = 6;
 	public static final int FIRE = 7;
+	public static final int ESCAPE = 8;
 
 	static {
 		keys = new boolean[NUM_KEYS];

@@ -26,7 +26,7 @@ public abstract class GameState {
 		game = gsm.getGame();
 		batch = game.getSpiteBatch();
 		camera = game.getCamera();
-		hudCamera = game.getCamera();
+		hudCamera = game.getHudCamera();
 
 	}
 
