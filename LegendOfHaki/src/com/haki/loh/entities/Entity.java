@@ -6,12 +6,13 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
 import com.haki.loh.gametates.GameState;
+import com.haki.loh.handlers.B2DVariables;
 
 public abstract class Entity {
 	protected GameState state;
 	protected Body body;
 	protected World world;
-	protected final float PPM = 100;
+	protected final float PPM = B2DVariables.PPM;
 	protected SpriteBatch batch;
 	protected OrthographicCamera camera;
 	protected float x, y, linearVelocityX, linearVelocityY;

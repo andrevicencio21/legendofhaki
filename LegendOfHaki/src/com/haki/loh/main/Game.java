@@ -9,8 +9,8 @@ import com.haki.loh.handlers.MyInputProcessor;
 
 public class Game implements ApplicationListener {
 	public static final String title = "Legend of Haki";
-	public static final int V_WIDTH = 320;
-	public static final int V_HEIGHT = 240;
+	public static final int V_WIDTH = 400;
+	public static final int V_HEIGHT = 300;
 	public static final int SCALE = 2;
 	public static final float STEP = 1 / 60f;
 

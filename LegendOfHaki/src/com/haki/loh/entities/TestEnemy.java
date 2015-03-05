@@ -30,7 +30,6 @@ public class TestEnemy extends Entity {
 		}
 		if (isRight
 				&& (System.currentTimeMillis() - timeRight) >= directionTime) {
-			System.out.println("change direction");
 			timeRight = 0;
 			isRight = false;
 			isLeft = true;
@@ -48,13 +47,11 @@ public class TestEnemy extends Entity {
 
 			if (linearVelocityX <= 0.5f) {
 				body.applyLinearImpulse(0.1f, 0, 0, 0, true);
-				System.out.println("right");
 			}
 		}
 		if (isLeft) {
 			if (linearVelocityX >= -0.5f) {
 				body.applyLinearImpulse(-0.1f, 0, 0, 0, true);
-				System.out.println("left");
 			}
 		}
 
@@ -67,12 +64,18 @@ public class TestEnemy extends Entity {
 		bdef.type = BodyType.DynamicBody;
 		body = world.createBody(bdef);
 		PolygonShape shape = new PolygonShape();
-		shape.setAsBox(8 / PPM, 14 / PPM);
+		shape.setAsBox(8 / PPM, 1.0f);
 		FixtureDef fdef = new FixtureDef();
 		fdef.shape = shape;
 		body.createFixture(fdef).setUserData(body);
 		isRight = true;
 		shape.dispose();
+
+//		// create foot need 3 foot. center and one for each side
+//		shape.setAsBox(4 / PPM, 4 / PPM, new Vector2(0, -14 / PPM), 0);
+//		fdef.shape = shape;
+//		fdef.isSensor = true;
+//		body.createFixture(fdef).setUserData("enemyFootRight");
 
 	}
 

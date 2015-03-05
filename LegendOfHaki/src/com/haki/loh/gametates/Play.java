@@ -127,7 +127,11 @@ public class Play extends GameState {
 	
 			debugText.draw(batch, "FPS: " + Gdx.graphics.getFramesPerSecond(),
 					40, 200);
-			
+			batch.setProjectionMatrix(camera.combined);
+			debugText.draw(batch, "____1 meter",
+					player.getBody().getPosition().x * PPM, player.getBody().getPosition().y * PPM + PPM  );
+			debugText.draw(batch, "____0 meter",
+					player.getBody().getPosition().x * PPM, player.getBody().getPosition().y * PPM);
 		}
 		batch.end();
 		
