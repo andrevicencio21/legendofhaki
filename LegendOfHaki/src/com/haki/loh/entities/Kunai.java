@@ -15,8 +15,8 @@ public class Kunai extends Entity {
 	private Entity entityCaller;
 	private Sprite kunaiSprite;
 	private boolean isForward;
-	private long kunaiDelay = 400;
-	private long wallHitDuration = 800;
+	private long kunaiDelay = 0;
+	private long wallHitDuration = 0;
 	private long wallHitTime = 0;
 
 	private long timeCalled;
@@ -35,14 +35,14 @@ public class Kunai extends Entity {
 		this.entityCaller = entityCaller;
 		this.batch = state.getBatch();
 		this.isForward = isForward;
-		loadAssets();
+		//loadAssets();
 		loader = new BodyEditorLoader(
 				Gdx.files.internal("bodyloader/kunai.json"));
 		world = state.getWorld();
 
 	}
 
-	public void createKunai() {
+	public void createBody() {
 		BodyDef bdef = new BodyDef();
 
 		if (System.currentTimeMillis() - timeCalled >= kunaiDelay) {
@@ -65,15 +65,16 @@ public class Kunai extends Entity {
 			fdef.friction = 0.5f;
 			fdef.restitution = 0.3f;
 			body = world.createBody(bdef);
+			body.setGravityScale(0f);
 			body.setUserData(this);
 			loader.attachFixture(body, "kunai", fdef, 1f);
 			body.getFixtureList().get(0).setUserData("kunai");
 
 			// body.setGravityScale(0.f);
 			if (!isForward)
-				body.applyForceToCenter(new Vector2(-3f, 0.5f), true);
+				body.applyForceToCenter(new Vector2(-3f, 0f), true);
 			else if (isForward)
-				body.applyForceToCenter(new Vector2(3f, 0.5f), true);
+				body.applyForceToCenter(new Vector2(3f, 0f), true);
 		}
 
 	}
@@ -87,28 +88,28 @@ public class Kunai extends Entity {
 				setRemovable(false);
 		}
 		if (body == null)
-			createKunai();
+			createBody();
 		if (body != null) {
 			x = body.getPosition().x;
 			y = body.getPosition().y;
 			linearVelocityX = body.getLinearVelocity().x;
 			linearVelocityY = body.getLinearVelocity().y;
 
-			kunaiSprite.setOrigin(kunaiSprite.getWidth() / 2,
-					kunaiSprite.getHeight() / 2);
-			kunaiSprite.setRotation(MathUtils.radiansToDegrees
-					* body.getAngle());
-			kunaiSprite.setPosition(x * PPM - kunaiSprite.getRegionWidth() / 2,
-					y * PPM - kunaiSprite.getRegionHeight() / 2);
+//			kunaiSprite.setOrigin(kunaiSprite.getWidth() / 2,
+//					kunaiSprite.getHeight() / 2);
+//			kunaiSprite.setRotation(MathUtils.radiansToDegrees
+//					* body.getAngle());
+//			kunaiSprite.setPosition(x * PPM - kunaiSprite.getRegionWidth() / 2,
+//					y * PPM - kunaiSprite.getRegionHeight() / 2);
 		}
 
 	}
 
 	@Override
 	public void render() {
-		if (body != null) {
-			kunaiSprite.draw(batch);
-		}
+//		if (body != null) {
+//			kunaiSprite.draw(batch);
+//		}
 	}
 
 	public void loadAssets() {

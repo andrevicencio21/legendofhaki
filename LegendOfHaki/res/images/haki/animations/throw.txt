@@ -1,0 +1,39 @@
+throw.png
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+throw_
+  rotate: false
+  xy: 0, 0
+  size: 401, 291
+  orig: 401, 291
+  offset: 0, 0
+  index: 0
+throw_
+  rotate: false
+  xy: 401, 0
+  size: 401, 291
+  orig: 401, 291
+  offset: 0, 0
+  index: 1
+throw_
+  rotate: false
+  xy: 802, 0
+  size: 401, 291
+  orig: 401, 291
+  offset: 0, 0
+  index: 2
+throw_
+  rotate: false
+  xy: 1203, 0
+  size: 401, 291
+  orig: 401, 291
+  offset: 0, 0
+  index: 3
+throw_
+  rotate: false
+  xy: 1604, 0
+  size: 401, 291
+  orig: 401, 291
+  offset: 0, 0
+  index: 4

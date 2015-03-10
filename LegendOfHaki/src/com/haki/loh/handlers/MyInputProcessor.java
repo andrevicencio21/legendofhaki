@@ -23,6 +23,9 @@ public class MyInputProcessor extends InputAdapter{
 		if(k == Keys.ESCAPE){
 			MyInput.setKey(MyInput.ESCAPE, true);
 		}
+		if(k == Keys.H){
+			MyInput.setKey(MyInput.ATTACK, true);
+		}
 		
 		return true;
 	}
@@ -44,6 +47,9 @@ public class MyInputProcessor extends InputAdapter{
 		}
 		if(k == Keys.ESCAPE){
 			MyInput.setKey(MyInput.ESCAPE, false);
+		}
+		if(k == Keys.H){
+			MyInput.setKey(MyInput.ATTACK, false);
 		}
 		return true;
 	}

@@ -57,6 +57,7 @@ public class TestEnemy extends Entity {
 
 	}
 
+	@Override
 	public void createBody() {
 
 		BodyDef bdef = new BodyDef();
@@ -64,18 +65,18 @@ public class TestEnemy extends Entity {
 		bdef.type = BodyType.DynamicBody;
 		body = world.createBody(bdef);
 		PolygonShape shape = new PolygonShape();
-		shape.setAsBox(8 / PPM, 1.0f);
+		shape.setAsBox(8 / PPM, 17 / PPM);
 		FixtureDef fdef = new FixtureDef();
 		fdef.shape = shape;
 		body.createFixture(fdef).setUserData(body);
 		isRight = true;
 		shape.dispose();
 
-//		// create foot need 3 foot. center and one for each side
-//		shape.setAsBox(4 / PPM, 4 / PPM, new Vector2(0, -14 / PPM), 0);
-//		fdef.shape = shape;
-//		fdef.isSensor = true;
-//		body.createFixture(fdef).setUserData("enemyFootRight");
+		// // create foot need 3 foot. center and one for each side
+		// shape.setAsBox(4 / PPM, 4 / PPM, new Vector2(0, -14 / PPM), 0);
+		// fdef.shape = shape;
+		// fdef.isSensor = true;
+		// body.createFixture(fdef).setUserData("enemyFootRight");
 
 	}
 

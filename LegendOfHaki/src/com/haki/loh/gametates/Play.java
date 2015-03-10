@@ -6,7 +6,11 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.objects.PolygonMapObject;
@@ -42,8 +46,22 @@ public class Play extends GameState {
 	private TiledMap tiledMap;
 	private TiledMapRenderer tmr;
 	private Player player;
+
+	// Debug Stuff /////////////////////////////////////
 	private boolean debugMode = true;
 	private BitmapFont debugText;
+
+	// Sprite and Animation Testing ///////////////////
+	private boolean testAnimation = false;
+	private Sprite testSpriteAnimation, testSprite;
+	private Animation testAnimatonToDraw;
+	private float testAnimationTimer;
+	private TextureAtlas testTextureAtlas;
+	private Array<Sprite> testSpriteArray;
+	private Texture texture;
+	private String texturePackageLocation = "images/haki/animations/jump.txt";
+	private String spriteName = "jump_";
+	private Texture backgroundImage;
 
 	public Play(GameStateManager gsm) {
 		super(gsm);
@@ -51,6 +69,12 @@ public class Play extends GameState {
 		entityArray = new Array<Entity>();
 		debugText = new BitmapFont();
 		debugText.setColor(Color.WHITE);
+		backgroundImage = new Texture(Gdx.files.internal("png/BG.png"));
+
+		if (testAnimation) {
+			createTestAnimation(texturePackageLocation, spriteName, 0.08f, // AnimationSpeed
+					0.3f); // Scale Factor
+		}
 
 		createWorld();
 		createLevel();
@@ -65,10 +89,27 @@ public class Play extends GameState {
 		tmr = new OrthogonalTiledMapRenderer(tiledMap);
 	}
 
+	public void createTestAnimation(String path1, String path2, float speed,
+			float scale) {
+		texture = new Texture(
+				Gdx.files.internal("images/haki/hakiresized2.png"));
+		testSprite = new Sprite(texture);
+
+		testTextureAtlas = new TextureAtlas(Gdx.files.internal(path1));
+		testSpriteArray = testTextureAtlas.createSprites(path2);
+		for (int i = 0; i < testSpriteArray.size; i++) {
+			testSpriteArray.get(i).setScale(scale);
+		}
+		testAnimatonToDraw = new Animation(speed, testSpriteArray);
+		testAnimationTimer = 0;
+
+	}
+
 	@Override
 	public void handleInput() {
 		player.handleInput();
 
+		// close Program
 		if (MyInput.isPressed(MyInput.ESCAPE)) {
 			System.exit(0);
 		}
@@ -88,25 +129,43 @@ public class Play extends GameState {
 				entityArray.removeValue(entityArray.get(i), true);
 			}
 		}
+
+		// update Test Animation
+		if (testAnimation) {
+			testAnimationTimer += Gdx.graphics.getDeltaTime();
+			testSpriteAnimation = ((Sprite) testAnimatonToDraw.getKeyFrame(
+					testAnimationTimer, true));
+			testSpriteAnimation.setPosition(0, 0);
+		}
 	}
 
 	@Override
 	public void render() {
+		// Clear Screan
+		Gdx.gl20.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-		Gdx.gl20.glClear(GL20.GL_COLOR_BUFFER_BIT); // Clear Screan
-
-		// fix DebugRenderer Camera to follow Player
-
-		// fix regular camera to follow player
 		camera.position.set(player.getBody().getPosition().x * PPM + 30, player
 				.getBody().getPosition().y * PPM + 30, 0);
 		camera.update();
-
-		// render tile map
 		tmr.setView(camera);
 		tmr.render();
+		batch.setProjectionMatrix(camera.combined);
 
-		// fix debug camera and render Debug World
+		batch.begin();
+
+		player.render();
+		for (int i = 0; i < entityArray.size; i++) {
+			entityArray.get(i).render();
+		}
+		if (testAnimation) {
+			testSpriteAnimation.draw(batch);
+			testSprite.draw(batch);
+		}
+		batch.setProjectionMatrix(hudCamera.combined);
+		debugText.draw(batch, "FPS: " + Gdx.graphics.getFramesPerSecond(),
+				40, 200);
+		batch.end();
+
 		if (debugMode) {
 			b2DCam.position.set(player.getBody().getPosition().x + 30 / PPM,
 					player.getBody().getPosition().y + 30 / PPM, 0);
@@ -114,27 +173,47 @@ public class Play extends GameState {
 			debugRenderer.render(world, b2DCam.combined);
 		}
 
-		// render sprites
-		batch.setProjectionMatrix(camera.combined);
-		batch.begin();
-		player.render();
-		for (int i = 0; i < entityArray.size; i++) {
-			entityArray.get(i).render();
-		}
-
-		if (debugMode) {
-			batch.setProjectionMatrix(hudCamera.combined);
-	
-			debugText.draw(batch, "FPS: " + Gdx.graphics.getFramesPerSecond(),
-					40, 200);
-			batch.setProjectionMatrix(camera.combined);
-			debugText.draw(batch, "____1 meter",
-					player.getBody().getPosition().x * PPM, player.getBody().getPosition().y * PPM + PPM  );
-			debugText.draw(batch, "____0 meter",
-					player.getBody().getPosition().x * PPM, player.getBody().getPosition().y * PPM);
-		}
-		batch.end();
 		
+
+		//
+		// // fix regular camera to follow player
+		// camera.position.set(player.getBody().getPosition().x * PPM + 30,
+		// player
+		// .getBody().getPosition().y * PPM + 30, 0);
+		// camera.update();
+		//
+		// // render tile map
+		// tmr.setView(camera);
+		// tmr.render();
+		//
+		//
+		// // fix debug camera and render Debug World
+		// if (debugMode) {
+		// b2DCam.position.set(player.getBody().getPosition().x + 30 / PPM,
+		// player.getBody().getPosition().y + 30 / PPM, 0);
+		// b2DCam.update();
+		// debugRenderer.render(world, b2DCam.combined);
+		// }
+		//
+		// // render Entities
+		// batch.setProjectionMatrix(camera.combined);
+		// batch.begin();
+		//
+		// batch.draw(backgroundImage, 0, 0);
+		// player.render();
+		//
+		//
+		// if (debugMode) {
+		// batch.setProjectionMatrix(hudCamera.combined);
+		//
+		// debugText.draw(batch, "FPS: " + Gdx.graphics.getFramesPerSecond(),
+		// 40, 200);
+		// if (testAnimation) {
+		// testSpriteAnimation.draw(batch);
+		// testSprite.draw(batch);
+		// }
+		// }
+		// batch.end();
 
 	}
 

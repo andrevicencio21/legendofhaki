@@ -50,6 +50,9 @@
    <image width="32" height="23" source="tiles/16.png"/>
   </tile>
  </tileset>
+ <imagelayer name="background" y="-704" visible="0">
+  <image source="../png/BG.png"/>
+ </imagelayer>
  <layer name="tiles" width="40" height="8">
   <data encoding="base64" compression="zlib">
    eJxjYxjcgG2gHUAAjLqPMkCu+xiBmAmKmannHAxArPtg7oG5hQWIWaGYDU0NOqbE/eSGHzb38QAxJxbMS4H7uBiw+5lQOLAg2U/LNAwASwcA8g==

@@ -31,6 +31,7 @@ public abstract class Entity {
 	public Entity(GameState state) {
 		this.state = state;
 	}
+	public abstract void createBody();
 
 	public abstract void update(float dt);
 

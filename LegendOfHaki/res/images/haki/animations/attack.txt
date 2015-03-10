@@ -1,0 +1,116 @@
+attack.png
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+attack_
+  rotate: false
+  xy: 0, 0
+  size: 431, 291
+  orig: 431, 291
+  offset: 0, 0
+  index: 0
+attack_
+  rotate: false
+  xy: 431, 0
+  size: 431, 291
+  orig: 431, 291
+  offset: 0, 0
+  index: 1
+attack_
+  rotate: false
+  xy: 862, 0
+  size: 431, 291
+  orig: 431, 291
+  offset: 0, 0
+  index: 2
+attack_
+  rotate: false
+  xy: 1293, 0
+  size: 431, 291
+  orig: 431, 291
+  offset: 0, 0
+  index: 3
+attack_
+  rotate: false
+  xy: 0, 291
+  size: 431, 291
+  orig: 431, 291
+  offset: 0, 0
+  index: 4
+attack_
+  rotate: false
+  xy: 431, 291
+  size: 431, 291
+  orig: 431, 291
+  offset: 0, 0
+  index: 5
+attack_
+  rotate: false
+  xy: 862, 291
+  size: 431, 291
+  orig: 431, 291
+  offset: 0, 0
+  index: 6
+attack_
+  rotate: false
+  xy: 1293, 291
+  size: 431, 291
+  orig: 431, 291
+  offset: 0, 0
+  index: 7
+attack_
+  rotate: false
+  xy: 0, 582
+  size: 431, 291
+  orig: 431, 291
+  offset: 0, 0
+  index: 8
+attack_
+  rotate: false
+  xy: 431, 582
+  size: 431, 291
+  orig: 431, 291
+  offset: 0, 0
+  index: 9
+attack_
+  rotate: false
+  xy: 862, 582
+  size: 431, 291
+  orig: 431, 291
+  offset: 0, 0
+  index: 10
+attack_
+  rotate: false
+  xy: 1293, 582
+  size: 431, 291
+  orig: 431, 291
+  offset: 0, 0
+  index: 11
+attack_
+  rotate: false
+  xy: 0, 873
+  size: 431, 291
+  orig: 431, 291
+  offset: 0, 0
+  index: 12
+attack_
+  rotate: false
+  xy: 431, 873
+  size: 431, 291
+  orig: 431, 291
+  offset: 0, 0
+  index: 13
+attack_
+  rotate: false
+  xy: 862, 873
+  size: 431, 291
+  orig: 431, 291
+  offset: 0, 0
+  index: 14
+attack_
+  rotate: false
+  xy: 1293, 873
+  size: 431, 291
+  orig: 431, 291
+  offset: 0, 0
+  index: 15
