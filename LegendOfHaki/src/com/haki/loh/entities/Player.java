@@ -14,7 +14,8 @@ import com.haki.loh.gametates.GameState;
 import com.haki.loh.handlers.MyInput;
 
 public class Player extends Entity {
-	private TextureAtlas atlasRun, atlasJump, atlasIdle, atlasThrow, atlasAttack;
+	private TextureAtlas atlasRun, atlasJump, atlasIdle, atlasThrow,
+			atlasAttack;
 	private Array<Sprite> spriteArrayToDraw, previousSpriteArrayToDraw,
 			idleRight, idleLeft, runRight, runLeft, jumpRight, jumpLeft,
 			throwRight, throwLeft, attackRight, attackLeft;
@@ -26,6 +27,8 @@ public class Player extends Entity {
 	private long throwTime;
 	private long throwDelay = 500;
 	private float animationTimer;
+	private long attackDelay = 400;
+	private long attackTime;
 
 	public Player(GameState state) {
 		super(state);
@@ -86,10 +89,10 @@ public class Player extends Entity {
 			}
 		}
 		if (MyInput.isPressed(MyInput.ATTACK)) {
-			isAttacking = true;
+			attackTime = System.currentTimeMillis();
 		}
 		if (!MyInput.isPressed(MyInput.ATTACK)) {
-			isAttacking = false;
+
 		}
 
 	}
@@ -102,6 +105,8 @@ public class Player extends Entity {
 				isThrowing = false;
 			}
 		}
+		if ((System.currentTimeMillis() - attackTime) >= attackDelay)
+			attackTime = 0;
 		animationTimer += Gdx.graphics.getDeltaTime();
 
 		linearVelocityX = body.getLinearVelocity().x;
@@ -171,8 +176,8 @@ public class Player extends Entity {
 			throwLeft.get(i).setScale(0.3f);
 			throwLeft.get(i).flip(true, false);
 		}
-		
-		atlasAttack= new TextureAtlas(
+
+		atlasAttack = new TextureAtlas(
 				Gdx.files.internal("images/haki/animations/attack.txt"));
 		attackRight = atlasAttack.createSprites("attack_");
 		for (int i = 0; i < attackRight.size; i++)
@@ -210,10 +215,10 @@ public class Player extends Entity {
 			else
 				spriteArrayToDraw = throwLeft;
 		}
-		if(isAttacking){
-			if(isForward)
+		if (attackTime != 0) {
+			if (isForward)
 				spriteArrayToDraw = attackRight;
-			else if(!isForward)
+			else if (!isForward)
 				spriteArrayToDraw = attackLeft;
 		}
 
