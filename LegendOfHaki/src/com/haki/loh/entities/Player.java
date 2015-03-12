@@ -109,18 +109,24 @@ public class Player extends Entity {
 	}
 
 	public void handleInput() {
+
 		if (MyInput.isDown(MyInput.RIGHT)) {
-			directionPressed = true;
-			isForward = true;
-			if (body.getLinearVelocity().x <= 2f)
-				body.applyLinearImpulse(0.2f, 0, 0, 0, true);
+			if (!isBusy || (isBusy && isForward)) {
+				directionPressed = true;
+				isForward = true;
+				if (body.getLinearVelocity().x <= 2f)
+					body.applyLinearImpulse(0.2f, 0, 0, 0, true);
+			}
+
 		}
 
 		if (MyInput.isDown(MyInput.LEFT)) {
-			directionPressed = true;
-			isForward = false;
-			if (body.getLinearVelocity().x >= -2f)
-				body.applyLinearImpulse(-0.2f, 0, 0, 0, true);
+			if (!isBusy || (isBusy && !isForward)) {
+				directionPressed = true;
+				isForward = false;
+				if (body.getLinearVelocity().x >= -2f)
+					body.applyLinearImpulse(-0.2f, 0, 0, 0, true);
+			}
 		}
 
 		if ((!MyInput.isDown(MyInput.LEFT) && (!MyInput.isDown(MyInput.RIGHT)))) {

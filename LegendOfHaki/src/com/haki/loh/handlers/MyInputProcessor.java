@@ -26,6 +26,19 @@ public class MyInputProcessor extends InputAdapter{
 		if(k == Keys.H){
 			MyInput.setKey(MyInput.ATTACK, true);
 		}
+		if(k == Keys.NUM_1){
+			MyInput.setKey(MyInput.num1, true);
+		}
+		if(k == Keys.NUM_2){
+			MyInput.setKey(MyInput.num2, true);
+		}
+		if(k == Keys.NUM_3){
+			MyInput.setKey(MyInput.num3, true);
+		}
+		if(k == Keys.NUM_4){
+			MyInput.setKey(MyInput.num4, true);
+		}
+		
 		
 		return true;
 	}
@@ -50,6 +63,18 @@ public class MyInputProcessor extends InputAdapter{
 		}
 		if(k == Keys.H){
 			MyInput.setKey(MyInput.ATTACK, false);
+		}
+		if(k == Keys.NUM_1){
+			MyInput.setKey(MyInput.num1, false);
+		}
+		if(k == Keys.NUM_2){
+			MyInput.setKey(MyInput.num2, false);
+		}
+		if(k == Keys.NUM_3){
+			MyInput.setKey(MyInput.num3, false);
+		}
+		if(k == Keys.NUM_4){
+			MyInput.setKey(MyInput.num4, false);
 		}
 		return true;
 	}

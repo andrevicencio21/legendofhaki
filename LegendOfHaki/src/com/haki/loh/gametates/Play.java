@@ -49,6 +49,7 @@ public class Play extends GameState {
 
 	// Debug Stuff /////////////////////////////////////
 	private boolean debugMode = true;
+	private boolean renderArt = true;
 	private BitmapFont debugText;
 
 	// Sprite and Animation Testing ///////////////////
@@ -61,7 +62,6 @@ public class Play extends GameState {
 	private Texture texture;
 	private String texturePackageLocation = "images/haki/animations/jump.txt";
 	private String spriteName = "jump_";
-	private Texture backgroundImage;
 
 	public Play(GameStateManager gsm) {
 		super(gsm);
@@ -69,7 +69,6 @@ public class Play extends GameState {
 		entityArray = new Array<Entity>();
 		debugText = new BitmapFont();
 		debugText.setColor(Color.WHITE);
-		backgroundImage = new Texture(Gdx.files.internal("png/BG.png"));
 
 		if (testAnimation) {
 			createTestAnimation(texturePackageLocation, spriteName, 0.08f, // AnimationSpeed
@@ -108,12 +107,23 @@ public class Play extends GameState {
 	@Override
 	public void handleInput() {
 		player.handleInput();
+
+		// Debug Input
 		if (MyInput.isPressed(MyInput.ESCAPE)) {
 			System.exit(0);
 		}
-		MyInput.update();
+		if (MyInput.isPressed(MyInput.num1)) {
+			debugMode = !debugMode;
+		}
+		if (MyInput.isPressed(MyInput.num2)) {
+			MapLayer layer = tiledMap.getLayers().get("background");
+			layer.setVisible(!layer.isVisible());
+		}
+		if (MyInput.isPressed(MyInput.num3)) {
+			renderArt = !renderArt;
+		}
 
-		// close Program
+		MyInput.update();
 
 	}
 
@@ -153,18 +163,22 @@ public class Play extends GameState {
 		batch.setProjectionMatrix(camera.combined);
 
 		batch.begin();
+		if (renderArt) {
+			player.render();
+			for (int i = 0; i < entityArray.size; i++) {
+				entityArray.get(i).render();
+			}
+			if (testAnimation) {
+				testSpriteAnimation.draw(batch);
+				testSprite.draw(batch);
+			}
 
-		player.render();
-		for (int i = 0; i < entityArray.size; i++) {
-			entityArray.get(i).render();
 		}
-		if (testAnimation) {
-			testSpriteAnimation.draw(batch);
-			testSprite.draw(batch);
+		if (debugMode) {
+			batch.setProjectionMatrix(hudCamera.combined);
+			debugText.draw(batch, "FPS: " + Gdx.graphics.getFramesPerSecond(),
+					40, 200);
 		}
-		batch.setProjectionMatrix(hudCamera.combined);
-		debugText.draw(batch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 40,
-				200);
 		batch.end();
 
 		if (debugMode) {
