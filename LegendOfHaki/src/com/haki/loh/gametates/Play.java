@@ -108,19 +108,20 @@ public class Play extends GameState {
 	@Override
 	public void handleInput() {
 		player.handleInput();
-
-		// close Program
 		if (MyInput.isPressed(MyInput.ESCAPE)) {
 			System.exit(0);
 		}
+		MyInput.update();
+
+		// close Program
+
 	}
 
 	@Override
 	public void update(float dt) {
 		world.step(dt, 6, 2);
-		handleInput();
-		player.update(dt);
 
+		player.update(dt);
 		for (int i = 0; i < entityArray.size; i++) {
 
 			entityArray.get(i).update(dt);
@@ -129,7 +130,7 @@ public class Play extends GameState {
 				entityArray.removeValue(entityArray.get(i), true);
 			}
 		}
-
+		handleInput();
 		// update Test Animation
 		if (testAnimation) {
 			testAnimationTimer += Gdx.graphics.getDeltaTime();
@@ -162,8 +163,8 @@ public class Play extends GameState {
 			testSprite.draw(batch);
 		}
 		batch.setProjectionMatrix(hudCamera.combined);
-		debugText.draw(batch, "FPS: " + Gdx.graphics.getFramesPerSecond(),
-				40, 200);
+		debugText.draw(batch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 40,
+				200);
 		batch.end();
 
 		if (debugMode) {
@@ -172,8 +173,6 @@ public class Play extends GameState {
 			b2DCam.update();
 			debugRenderer.render(world, b2DCam.combined);
 		}
-
-		
 
 		//
 		// // fix regular camera to follow player

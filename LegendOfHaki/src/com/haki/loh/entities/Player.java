@@ -22,6 +22,7 @@ public class Player extends Entity {
 	private Animation animationToDraw;
 	private Sprite spriteToDraw;
 	private boolean isOnGround, isJumping, isThrowing, isAttacking;
+	private boolean isBusy = false;
 	private boolean isForward = true;
 	private boolean directionPressed = false;
 	private long throwTime;
@@ -37,6 +38,55 @@ public class Player extends Entity {
 		// Load Texture and SoundAssets
 		loadAssets();
 		createBody();
+	}
+
+	@Override
+	public void update(float dt) {
+		animationTimer += Gdx.graphics.getDeltaTime();
+		linearVelocityX = body.getLinearVelocity().x;
+		linearVelocityY = body.getLinearVelocity().y;
+		x = body.getPosition().x;
+		y = body.getPosition().y;
+		if (throwTime != 0) {
+			if ((System.currentTimeMillis() - throwTime) >= throwDelay) {
+				throwTime = 0;
+			}
+		}
+		if (attackTime != 0) {
+			if ((System.currentTimeMillis() - attackTime) >= attackDelay) {
+				attackTime = 0;
+			}
+		}
+
+		setPlayerState();
+		setAnimation();
+
+	}
+
+	public void setPlayerState() {
+		if (isThrowing || isAttacking) {
+			isBusy = true;
+		} else if (!isThrowing && !isAttacking) {
+			isBusy = false;
+		}
+		if (state.getMyContactListener().numFootContacts > 0) {
+			isOnGround = true;
+			isJumping = false;
+		} else if (state.getMyContactListener().numFootContacts == 0) {
+			isOnGround = false;
+			isJumping = true;
+		}
+		if (throwTime != 0) {
+			isThrowing = true;
+		} else if (throwTime == 0) {
+			isThrowing = false;
+		}
+		if (attackTime != 0) {
+			isAttacking = true;
+		} else if (attackTime == 0) {
+			isAttacking = false;
+		}
+
 	}
 
 	public void createBody() {
@@ -79,49 +129,21 @@ public class Player extends Entity {
 
 		if (MyInput.isPressed(MyInput.JUMP)) {
 			if (isOnGround)
-				body.applyForceToCenter(new Vector2(0, 50), true);
+				body.applyForceToCenter(new Vector2(0, 250), true);
 		}
-		if (MyInput.isPressed(MyInput.FIRE)) {
-			if (!isThrowing && throwTime == 0) {
-				state.getEntityArray().add(new Kunai(state, this, isForward));
-				throwTime = System.currentTimeMillis();
-				isThrowing = true;
+		if (!isBusy) {
+			if (MyInput.isPressed(MyInput.FIRE)) {
+				if (throwTime == 0) {
+					state.getEntityArray().add(
+							new Kunai(state, this, isForward));
+					throwTime = System.currentTimeMillis();
+				}
+			}
+			if (MyInput.isPressed(MyInput.ATTACK)) {
+				if (attackTime == 0)
+					attackTime = System.currentTimeMillis();
 			}
 		}
-		if (MyInput.isPressed(MyInput.ATTACK)) {
-			attackTime = System.currentTimeMillis();
-		}
-		if (!MyInput.isPressed(MyInput.ATTACK)) {
-
-		}
-
-	}
-
-	@Override
-	public void update(float dt) {
-		if (isThrowing && !MyInput.isDown(MyInput.FIRE)) {
-			if ((System.currentTimeMillis() - throwTime) >= throwDelay) {
-				throwTime = 0;
-				isThrowing = false;
-			}
-		}
-		if ((System.currentTimeMillis() - attackTime) >= attackDelay)
-			attackTime = 0;
-		animationTimer += Gdx.graphics.getDeltaTime();
-
-		linearVelocityX = body.getLinearVelocity().x;
-		linearVelocityY = body.getLinearVelocity().y;
-		x = body.getPosition().x;
-		y = body.getPosition().y;
-
-		if (state.getMyContactListener().numFootContacts > 0) {
-			isOnGround = true;
-			isJumping = false;
-		} else if (state.getMyContactListener().numFootContacts == 0) {
-			isOnGround = false;
-			isJumping = true;
-		}
-		setAnimation();
 
 	}
 
