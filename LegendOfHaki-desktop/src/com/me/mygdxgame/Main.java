@@ -16,8 +16,7 @@ public class Main {
 			cfg.width = LwjglApplicationConfiguration.getDesktopDisplayMode().width;
 			cfg.height = LwjglApplicationConfiguration.getDesktopDisplayMode().height;
 			cfg.fullscreen = false;
-		}
-		else{
+		} else {
 			cfg.width = Game.V_WIDTH * Game.SCALE;
 			cfg.height = Game.V_HEIGHT * Game.SCALE;
 			cfg.fullscreen = false;
