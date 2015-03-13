@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="40" height="8" tilewidth="32" tileheight="32" nextobjectid="13">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="40" height="8" tilewidth="32" tileheight="32">
  <tileset firstgid="1" name="desserttiles" tilewidth="32" tileheight="32">
   <tile id="0">
    <image width="32" height="32" source="tiles/1.png"/>
@@ -59,10 +59,11 @@
   </data>
  </layer>
  <objectgroup name="collision">
-  <object id="1" x="0" y="224" width="384" height="32"/>
-  <object id="5" x="0" y="0" width="32" height="224"/>
-  <object id="10" x="384" y="224" width="448" height="32"/>
-  <object id="11" x="736" y="192" width="96"/>
-  <object id="12" x="800" y="96" width="160" height="64"/>
+  <object x="0" y="0" width="32" height="224"/>
+  <object x="736" y="192" width="96"/>
+  <object x="800" y="96" width="160" height="64"/>
+  <object x="32" y="224">
+   <polyline points="0,0 704,0 704,-32 800,-32 800,32"/>
+  </object>
  </objectgroup>
 </map>

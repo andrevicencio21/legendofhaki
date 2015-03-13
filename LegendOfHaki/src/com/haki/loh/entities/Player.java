@@ -219,18 +219,18 @@ public class Player extends Entity {
 	}
 
 	public void setAnimation() {
-		if (directionPressed == false && isForward && !isJumping)
+		if (!directionPressed && isForward && !isJumping)
 			spriteArrayToDraw = idleRight;
-		if (directionPressed == false && !isForward && !isJumping)
+		if (!directionPressed && !isForward && !isJumping)
 			spriteArrayToDraw = idleLeft;
 		if (linearVelocityX > 0 && directionPressed && isOnGround)
 			spriteArrayToDraw = runRight;
 		if (linearVelocityX < 0 && directionPressed && isOnGround)
 			spriteArrayToDraw = runLeft;
-		if (linearVelocityX == 0 && isForward && linearVelocityY == 0)
-			spriteArrayToDraw = idleRight;
-		if (linearVelocityX == 0 && !isForward && linearVelocityY == 0)
-			spriteArrayToDraw = idleLeft;
+//		if (linearVelocityX == 0 && isForward && linearVelocityY == 0)
+//			spriteArrayToDraw = idleRight;
+//		if (linearVelocityX == 0 && !isForward && linearVelocityY == 0)
+//			spriteArrayToDraw = idleLeft;
 		if (linearVelocityX >= 0 && linearVelocityY != 0 && isForward
 				&& isJumping)
 			spriteArrayToDraw = jumpRight;
