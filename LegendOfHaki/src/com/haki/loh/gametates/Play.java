@@ -3,14 +3,12 @@ package com.haki.loh.gametates;
 import static com.haki.loh.handlers.B2DVariables.PPM;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.objects.PolygonMapObject;
@@ -31,9 +29,13 @@ import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
+import com.brashmonkey.spriter.Data;
+import com.brashmonkey.spriter.LibGdxDrawer;
+import com.brashmonkey.spriter.LibGdxLoader;
+import com.brashmonkey.spriter.SCMLReader;
+import com.brashmonkey.spriter.Spriter;
 import com.haki.loh.entities.Entity;
-import com.haki.loh.entities.Player;
-import com.haki.loh.entities.TestEnemy;
+import com.haki.loh.entities.Tanuki;
 import com.haki.loh.handlers.GameStateManager;
 import com.haki.loh.handlers.MyContactListener;
 import com.haki.loh.handlers.MyInput;
@@ -45,23 +47,19 @@ public class Play extends GameState {
 	private OrthographicCamera b2DCam;
 	private TiledMap tiledMap;
 	private TiledMapRenderer tmr;
-	private Player player;
+	private Tanuki tanuki;
+	public ShapeRenderer renderer;
 
 	// Debug Stuff /////////////////////////////////////
 	private boolean debugMode = true;
 	private boolean renderArt = true;
 	private BitmapFont debugText;
-
-	// Sprite and Animation Testing ///////////////////
-	private boolean testAnimation = false;
-	private Sprite testSpriteAnimation, testSprite;
-	private Animation testAnimatonToDraw;
-	private float testAnimationTimer;
-	private TextureAtlas testTextureAtlas;
-	private Array<Sprite> testSpriteArray;
-	private Texture texture;
-	private String texturePackageLocation = "images/haki/animations/jump.txt";
-	private String spriteName = "jump_";
+	public static FileHandle scmlHandle;
+	public static SCMLReader reader;
+	public static Data data;
+	public static LibGdxLoader loader;
+	public static LibGdxDrawer drawer;
+	public String file = "images/haki/Haki.scml";
 
 	public Play(GameStateManager gsm) {
 		super(gsm);
@@ -70,16 +68,21 @@ public class Play extends GameState {
 		debugText = new BitmapFont();
 		debugText.setColor(Color.WHITE);
 
-		if (testAnimation) {
-			createTestAnimation(texturePackageLocation, spriteName, 0.08f, // AnimationSpeed
-					0.3f); // Scale Factor
-		}
-
 		createWorld();
 		createLevel();
-		createPlayer();
-		entityArray.add(new TestEnemy(this));
 
+		renderer = new ShapeRenderer();
+		scmlHandle = Gdx.files.internal("images/haki/Haki.scml");
+		reader = new SCMLReader(scmlHandle.read());
+		data = reader.getData();
+		loader = new LibGdxLoader(data);
+		loader.load(scmlHandle.file());
+		drawer = new LibGdxDrawer(loader, batch, renderer);
+		Spriter.setDrawerDependencies(batch, renderer);
+		Spriter.init(LibGdxLoader.class, LibGdxDrawer.class);
+		Spriter.load(Gdx.files.internal(file).read(), "images/haki/Haki.scml");
+
+		createPlayer();
 		// set up box 2d camera
 		b2DCam = new OrthographicCamera();
 		b2DCam.setToOrtho(false, Game.V_WIDTH / PPM, Game.V_HEIGHT / PPM);
@@ -88,25 +91,9 @@ public class Play extends GameState {
 		tmr = new OrthogonalTiledMapRenderer(tiledMap);
 	}
 
-	public void createTestAnimation(String path1, String path2, float speed,
-			float scale) {
-		texture = new Texture(
-				Gdx.files.internal("images/haki/hakiresized2.png"));
-		testSprite = new Sprite(texture);
-
-		testTextureAtlas = new TextureAtlas(Gdx.files.internal(path1));
-		testSpriteArray = testTextureAtlas.createSprites(path2);
-		for (int i = 0; i < testSpriteArray.size; i++) {
-			testSpriteArray.get(i).setScale(scale);
-		}
-		testAnimatonToDraw = new Animation(speed, testSpriteArray);
-		testAnimationTimer = 0;
-
-	}
-
 	@Override
 	public void handleInput() {
-		player.handleInput();
+		// player.handleInput();
 
 		// Debug Input
 		if (MyInput.isPressed(MyInput.ESCAPE)) {
@@ -130,10 +117,9 @@ public class Play extends GameState {
 	@Override
 	public void update(float dt) {
 		world.step(dt, 6, 2);
-
-		player.update(dt);
+		tanuki.update(dt);
+		Spriter.update();
 		for (int i = 0; i < entityArray.size; i++) {
-
 			entityArray.get(i).update(dt);
 			if (entityArray.get(i).isRemovable()) {
 				world.destroyBody(entityArray.get(i).getBody());
@@ -141,21 +127,16 @@ public class Play extends GameState {
 			}
 		}
 		handleInput();
-		// update Test Animation
-		if (testAnimation) {
-			testAnimationTimer += Gdx.graphics.getDeltaTime();
-			testSpriteAnimation = ((Sprite) testAnimatonToDraw.getKeyFrame(
-					testAnimationTimer, true));
-			testSpriteAnimation.setPosition(0, 0);
-		}
+
 	}
 
 	@Override
 	public void render() {
+
 		// Clear Screan
 		Gdx.gl20.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-		camera.position.set(player.getBody().getPosition().x * PPM + 30, player
+		camera.position.set(tanuki.getBody().getPosition().x * PPM + 30, tanuki
 				.getBody().getPosition().y * PPM + 30, 0);
 		camera.update();
 		tmr.setView(camera);
@@ -163,75 +144,35 @@ public class Play extends GameState {
 		batch.setProjectionMatrix(camera.combined);
 
 		batch.begin();
+
 		if (renderArt) {
-			player.render();
-			for (int i = 0; i < entityArray.size; i++) {
-				entityArray.get(i).render();
-			}
-			if (testAnimation) {
-				testSpriteAnimation.draw(batch);
-				testSprite.draw(batch);
-			}
+			renderer.setProjectionMatrix(camera.combined);
+			Spriter.draw();
 
 		}
 		if (debugMode) {
 			batch.setProjectionMatrix(hudCamera.combined);
+			debugText.setScale(0.7f);
 			debugText.draw(batch, "FPS: " + Gdx.graphics.getFramesPerSecond(),
-					40, 200);
+					0, 300);
+			debugText.draw(batch, "Vel X: "
+					+ tanuki.getBody().getLinearVelocity().x, 0, 290);
+			debugText.draw(batch, "Vel Y: "
+					+ tanuki.getBody().getLinearVelocity().y, 0, 280);
+			debugText.draw(batch, "isGrounded: " + tanuki.isGrounded(), 0, 270);
 		}
 		batch.end();
 
 		if (debugMode) {
-			b2DCam.position.set(player.getBody().getPosition().x + 30 / PPM,
-					player.getBody().getPosition().y + 30 / PPM, 0);
+			b2DCam.position.set(tanuki.getBody().getPosition().x + 30 / PPM,
+					tanuki.getBody().getPosition().y + 30 / PPM, 0);
 			b2DCam.update();
 			debugRenderer.render(world, b2DCam.combined);
 		}
-
-		//
-		// // fix regular camera to follow player
-		// camera.position.set(player.getBody().getPosition().x * PPM + 30,
-		// player
-		// .getBody().getPosition().y * PPM + 30, 0);
-		// camera.update();
-		//
-		// // render tile map
-		// tmr.setView(camera);
-		// tmr.render();
-		//
-		//
-		// // fix debug camera and render Debug World
-		// if (debugMode) {
-		// b2DCam.position.set(player.getBody().getPosition().x + 30 / PPM,
-		// player.getBody().getPosition().y + 30 / PPM, 0);
-		// b2DCam.update();
-		// debugRenderer.render(world, b2DCam.combined);
-		// }
-		//
-		// // render Entities
-		// batch.setProjectionMatrix(camera.combined);
-		// batch.begin();
-		//
-		// batch.draw(backgroundImage, 0, 0);
-		// player.render();
-		//
-		//
-		// if (debugMode) {
-		// batch.setProjectionMatrix(hudCamera.combined);
-		//
-		// debugText.draw(batch, "FPS: " + Gdx.graphics.getFramesPerSecond(),
-		// 40, 200);
-		// if (testAnimation) {
-		// testSpriteAnimation.draw(batch);
-		// testSprite.draw(batch);
-		// }
-		// }
-		// batch.end();
-
 	}
 
 	public void createPlayer() {
-		player = new Player(this);
+		tanuki = new Tanuki(this);
 	}
 
 	public void createWorld() {
@@ -262,10 +203,10 @@ public class Play extends GameState {
 				BodyDef bd = new BodyDef();
 				bd.type = BodyType.StaticBody;
 				Body body2 = world.createBody(bd);
+				body2.createFixture(cs, 1).setFriction(1f);
 				for (int i = 0; i < body2.getFixtureList().size; i++) {
 					body2.getFixtureList().get(i).setUserData("wall");
 				}
-				body2.createFixture(cs, 1).setFriction(0.7f);
 			} else if (mo instanceof PolygonMapObject) {
 				shape = getPolygon((PolygonMapObject) mo);
 				BodyDef bd = new BodyDef();

@@ -55,13 +55,12 @@
  </imagelayer>
  <layer name="tiles" width="40" height="8">
   <data encoding="base64" compression="zlib">
-   eJxjYxjcgG2gHUAAjLqPgYEJDZMC6BV+5LpxJMcvuXGKDLgYMMMeF2YmQS0laQ4ZAADPjAB+
+   eJxjYxjcgG2gHUAAjLqPMjDqPsoALd3HhITJBVxo5uDDzCSoRcfkAgCpTABu
   </data>
  </layer>
  <objectgroup name="collision">
   <object x="0" y="0" width="32" height="224"/>
   <object x="736" y="192" width="96"/>
-  <object x="800" y="96" width="160" height="64"/>
   <object x="32" y="224">
    <polyline points="0,0 704,0 704,-32 800,-32 800,32"/>
   </object>

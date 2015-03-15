@@ -1,7 +1,5 @@
 package com.haki.loh.handlers;
 
-import java.util.ArrayList;
-
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
@@ -25,10 +23,12 @@ public class MyContactListener implements ContactListener {
 		Fixture fb = c.getFixtureB();
 		if (fa == null || fb == null)
 			return;
-		if (fa.getUserData() != null && fa.getUserData().equals("playerFoot")) {
+		if (fa.getUserData() != null && fa.getUserData().equals("playerFoot")
+				&& fb.getUserData().equals("wall")) {
 			numFootContacts++;
 		}
 		if (fb.getUserData() != null && fb.getUserData().equals("playerFoot")) {
+
 			numFootContacts++;
 		}
 		if (fa.getUserData() != null && fa.getUserData().equals("kunai")
@@ -53,7 +53,9 @@ public class MyContactListener implements ContactListener {
 		Fixture fb = c.getFixtureB();
 		if (fa == null || fb == null)
 			return;
-		if (fa.getUserData() != null && fa.getUserData().equals("playerFoot")) {
+
+		if (fa.getUserData() != null && fa.getUserData().equals("playerFoot")
+				&& fb.getUserData().equals("wall")) {
 			numFootContacts--;
 		}
 		if (fb.getUserData() != null && fb.getUserData().equals("playerFoot")) {

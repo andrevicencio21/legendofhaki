@@ -18,7 +18,16 @@ public abstract class Entity {
 	protected float x, y, linearVelocityX, linearVelocityY;
 	protected TextureAtlas textureAtlas;
 	protected boolean removable = false;
+	protected boolean isGrounded, isForward;
 	
+
+	public boolean isGrounded() {
+		return isGrounded;
+	}
+
+	public void setGrounded(boolean isGrounded) {
+		this.isGrounded = isGrounded;
+	}
 
 	public boolean isRemovable() {
 		return removable;
@@ -31,16 +40,25 @@ public abstract class Entity {
 	public Entity(GameState state) {
 		this.state = state;
 	}
+
 	public abstract void createBody();
 
-	public abstract void update(float dt);
+	public void update(float dt) {
+		if (body != null) {
+			x = body.getPosition().x;
+			y = body.getPosition().y;
+			linearVelocityX = body.getLinearVelocity().x;
+			linearVelocityY = body.getLinearVelocity().y;
+		}
+	}
 
 	public abstract void render();
 
 	public Body getBody() {
 		return body;
 	}
-	public TextureAtlas getTextureAtlas(){
+
+	public TextureAtlas getTextureAtlas() {
 		return textureAtlas;
 	}
 }

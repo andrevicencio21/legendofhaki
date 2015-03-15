@@ -1,0 +1,4 @@
+Left -200
+top -290
+right - 200
+bottom 0
