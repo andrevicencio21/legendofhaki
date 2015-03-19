@@ -48,6 +48,11 @@ public class Play extends GameState {
 	private TiledMap tiledMap;
 	private TiledMapRenderer tmr;
 	private Tanuki tanuki;
+
+	public Tanuki getTanuki() {
+		return tanuki;
+	}
+
 	public ShapeRenderer renderer;
 
 	// Debug Stuff /////////////////////////////////////

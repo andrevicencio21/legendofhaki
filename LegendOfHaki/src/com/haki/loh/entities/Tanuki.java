@@ -5,19 +5,20 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
-import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.brashmonkey.spriter.Animation;
 import com.brashmonkey.spriter.Data;
 import com.brashmonkey.spriter.LibGdxLoader;
 import com.brashmonkey.spriter.Mainline.Key;
 import com.brashmonkey.spriter.Player;
+import com.brashmonkey.spriter.Player.PlayerListener;
 import com.brashmonkey.spriter.SCMLReader;
 import com.brashmonkey.spriter.Spriter;
-import com.brashmonkey.spriter.Player.PlayerListener;
 import com.haki.loh.gametates.GameState;
 import com.haki.loh.handlers.MyInput;
+import com.haki.loh.handlers.SaveManager;
 
 public class Tanuki extends Entity {
 	private Player character;
@@ -39,11 +40,24 @@ public class Tanuki extends Entity {
 
 	// Attack Delays
 	private long attack1Delay = 500, attack2Delay = 500, attack3Delay = 500;
+	private float startingX, startingY;
 
 	public Tanuki(GameState state) {
 		super(state);
 		batch = state.getBatch();
 		world = state.getWorld();
+		FileHandle handle = Gdx.files.local("bin/savefile.json");
+		if (handle.exists()) {
+
+			SaveManager sm = new SaveManager(this);
+			sm.load();
+			startingX = sm.saveFile.startingX;
+			startingY = sm.saveFile.startingY;
+		} else {
+			System.out.println("doesnt exist");
+			startingX = 100 / PPM;
+			startingY = 120 / PPM;
+		}
 		loadAssets();
 		createBody();
 		isForward = true;
@@ -95,7 +109,7 @@ public class Tanuki extends Entity {
 	// Creates box2D body
 	public void createBody() {
 		BodyDef bdef = new BodyDef();
-		bdef.position.set(MathUtils.random(25, 200) / PPM, 200 / PPM);
+		bdef.position.set(startingX, startingY);
 		bdef.type = BodyType.DynamicBody;
 		body = world.createBody(bdef);
 		PolygonShape shape = new PolygonShape();
@@ -261,6 +275,8 @@ public class Tanuki extends Entity {
 			body.applyForceToCenter(0f, 250f, true);
 		}
 		if (MyInput.isPressed(MyInput.FIRE) && isGrounded) {
+			SaveManager sm = new SaveManager(this);
+			sm.save();
 			if (attack1Time == 0 && attack2Time == 0 && attack3Time == 0) {
 				attack1Time = System.currentTimeMillis();
 			}
