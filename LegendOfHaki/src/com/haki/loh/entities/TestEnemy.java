@@ -1,20 +1,19 @@
 package com.haki.loh.entities;
 
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
-import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
-import com.haki.loh.gametates.GameState;
+import com.haki.loh.gametates.Play;
 
 public class TestEnemy extends Entity {
 	private boolean isRight, isLeft;
 	private long timeRight = 0, timeLeft = 0;
 	private long directionTime = 1500;
 
-	public TestEnemy(GameState state) {
-		super(state);
-		world = state.getWorld();
+	public TestEnemy(Play play) {
+		super(play);
+		world = play.getWorld();
 		loadAssets();
 		createBody();
 	}

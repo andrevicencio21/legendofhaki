@@ -152,6 +152,7 @@ public class Play extends GameState {
 
 		if (renderArt) {
 			renderer.setProjectionMatrix(camera.combined);
+			tanuki.render();
 			Spriter.draw();
 
 		}
@@ -277,6 +278,9 @@ public class Play extends GameState {
 		polygon.setAsBox(rectangle.width * 0.5f / PPM, rectangle.height * 0.5f
 				/ PPM, size, 0.0f);
 		return polygon;
+	}
+	public LibGdxDrawer getDrawer(){
+		return drawer;
 	}
 
 	@Override

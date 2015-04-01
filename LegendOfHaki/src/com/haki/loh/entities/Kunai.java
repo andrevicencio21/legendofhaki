@@ -2,13 +2,12 @@ package com.haki.loh.entities;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
-import com.haki.loh.gametates.GameState;
+import com.haki.loh.gametates.Play;
 import com.haki.loh.handlers.BodyEditorLoader;
 
 public class Kunai extends Entity {
@@ -23,22 +22,22 @@ public class Kunai extends Entity {
 	private BodyEditorLoader loader;
 	private FixtureDef fdef;
 
-	public Kunai(GameState state) {
-		super(state);
-		world = state.getWorld();
+	public Kunai(Play play) {
+		super(play);
+		world = play.getWorld();
 
 	}
 
-	public Kunai(GameState state, Entity entityCaller, boolean isForward) {
-		super(state);
+	public Kunai(Play play, Entity entityCaller, boolean isForward) {
+		super(play);
 		timeCalled = System.currentTimeMillis();
 		this.entityCaller = entityCaller;
-		this.batch = state.getBatch();
+		this.batch = play.getBatch();
 		this.isForward = isForward;
-		//loadAssets();
+		// loadAssets();
 		loader = new BodyEditorLoader(
 				Gdx.files.internal("bodyloader/kunai.json"));
-		world = state.getWorld();
+		world = play.getWorld();
 
 	}
 
@@ -47,13 +46,16 @@ public class Kunai extends Entity {
 
 		if (System.currentTimeMillis() - timeCalled >= kunaiDelay) {
 			if (isForward) {
-				bdef.position.set(
-						entityCaller.getBody().getPosition().x + 15 / PPM,
-						entityCaller.getBody().getPosition().y + 5 / PPM);
+				bdef.position
+						.set(entityCaller.getBody().getPosition().x + 15 / PPM,
+								entityCaller.getBody().getPosition().y + 5
+										/ PPM);
 			}
 			if (!isForward) {
-				bdef.position.set(entityCaller.getBody().getPosition().x - 3 / PPM,
-						entityCaller.getBody().getPosition().y + 5 / PPM);
+				bdef.position
+						.set(entityCaller.getBody().getPosition().x - 3 / PPM,
+								entityCaller.getBody().getPosition().y + 5
+										/ PPM);
 			}
 			bdef.type = BodyType.DynamicBody;
 			bdef.bullet = true;
@@ -95,21 +97,22 @@ public class Kunai extends Entity {
 			linearVelocityX = body.getLinearVelocity().x;
 			linearVelocityY = body.getLinearVelocity().y;
 
-//			kunaiSprite.setOrigin(kunaiSprite.getWidth() / 2,
-//					kunaiSprite.getHeight() / 2);
-//			kunaiSprite.setRotation(MathUtils.radiansToDegrees
-//					* body.getAngle());
-//			kunaiSprite.setPosition(x * PPM - kunaiSprite.getRegionWidth() / 2,
-//					y * PPM - kunaiSprite.getRegionHeight() / 2);
+			// kunaiSprite.setOrigin(kunaiSprite.getWidth() / 2,
+			// kunaiSprite.getHeight() / 2);
+			// kunaiSprite.setRotation(MathUtils.radiansToDegrees
+			// * body.getAngle());
+			// kunaiSprite.setPosition(x * PPM - kunaiSprite.getRegionWidth() /
+			// 2,
+			// y * PPM - kunaiSprite.getRegionHeight() / 2);
 		}
 
 	}
 
 	@Override
 	public void render() {
-//		if (body != null) {
-//			kunaiSprite.draw(batch);
-//		}
+		// if (body != null) {
+		// kunaiSprite.draw(batch);
+		// }
 	}
 
 	public void loadAssets() {

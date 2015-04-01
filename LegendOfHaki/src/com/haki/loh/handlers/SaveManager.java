@@ -32,14 +32,14 @@ public class SaveManager {
 		
 		FileHandle handle = Gdx.files.local("bin/savefile.json");
 		handle.writeString(json.prettyPrint(saveFile), false);
-		System.out.println(json.toJson(saveFile));
+		//System.out.println(json.toJson(saveFile));
 
 	}
 	public void load(){
 		Json json = new Json();
 		FileHandle handle = Gdx.files.local("bin/savefile.json");
 		saveFile = json.fromJson(SaveFile.class, handle);
-		System.out.println("Load Complete");
+		//System.out.println("Load Complete");
 	}
 
 }

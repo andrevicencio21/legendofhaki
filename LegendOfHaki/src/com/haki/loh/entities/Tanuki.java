@@ -2,7 +2,6 @@ package com.haki.loh.entities;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
@@ -10,13 +9,15 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.brashmonkey.spriter.Animation;
 import com.brashmonkey.spriter.Data;
+import com.brashmonkey.spriter.LibGdxDrawer;
 import com.brashmonkey.spriter.LibGdxLoader;
 import com.brashmonkey.spriter.Mainline.Key;
 import com.brashmonkey.spriter.Player;
 import com.brashmonkey.spriter.Player.PlayerListener;
+import com.brashmonkey.spriter.PlayerTweener;
 import com.brashmonkey.spriter.SCMLReader;
 import com.brashmonkey.spriter.Spriter;
-import com.haki.loh.gametates.GameState;
+import com.haki.loh.gametates.Play;
 import com.haki.loh.handlers.MyInput;
 import com.haki.loh.handlers.SaveManager;
 
@@ -32,8 +33,8 @@ public class Tanuki extends Entity {
 	// There booleans determine whether the player States and it decides what
 	// animation
 	// should be played or what can or cannot happen
-	private boolean isDirectionPressed, isRun, isIdle, isJumping, isFalling,
-			isAttack1, isAttack2, isAttack3;
+	private boolean isBusy, isDirectionPressed, isRun, isIdle, isJumping,
+			isFalling, isAttack1, isAttack2, isAttack3;
 
 	// Attack Timers
 	private long attack1Time = 0, attack2Time = 0, attack3Time = 0;
@@ -41,11 +42,16 @@ public class Tanuki extends Entity {
 	// Attack Delays
 	private long attack1Delay = 500, attack2Delay = 500, attack3Delay = 500;
 	private float startingX, startingY;
+	private LibGdxDrawer drawer;
 
-	public Tanuki(GameState state) {
-		super(state);
-		batch = state.getBatch();
-		world = state.getWorld();
+	// Interpolation variables
+	PlayerTweener characters;
+
+	public Tanuki(Play play) {
+		super(play);
+		batch = play.getBatch();
+		world = play.getWorld();
+		drawer = play.getDrawer();
 		FileHandle handle = Gdx.files.local("bin/savefile.json");
 		if (handle.exists()) {
 
@@ -68,6 +74,9 @@ public class Tanuki extends Entity {
 		Data data = new SCMLReader(handle.read()).getData();
 		loader = new LibGdxLoader(data);
 		loader.load(handle.file());
+		characters = new PlayerTweener(data.getEntity(0));
+
+
 		character = Spriter.newPlayer("images/haki/Haki.scml", "Haki");
 		character.setScale(0.3f);
 		setListener();
@@ -142,9 +151,9 @@ public class Tanuki extends Entity {
 	// then determines the correct state of the player.
 	public void setStates() {
 		// check isGrounded
-		if (state.getMyContactListener().numFootContacts > 0) {
+		if (play.getMyContactListener().numFootContacts > 0) {
 			isGrounded = true;
-		} else if (state.getMyContactListener().numFootContacts == 0) {
+		} else if (play.getMyContactListener().numFootContacts == 0) {
 			isGrounded = false;
 		}
 		// Check Attack States
@@ -169,6 +178,11 @@ public class Tanuki extends Entity {
 			attack3Time = 0;
 			isAttack3 = false;
 		}
+		// check if Busy
+		if (isAttack1 || isAttack2 || isAttack3)
+			isBusy = true;
+		else
+			isBusy = false;
 
 		// Check isForward
 		if (isDirectionPressed) {
@@ -209,12 +223,12 @@ public class Tanuki extends Entity {
 	public void setAnimation() {
 		if (isRun && !isAttack1 && !isAttack2 && !isAttack3) {
 			character.setAnimation("run");
-			character.speed = 18;
+			character.speed = 15;
 
 		}
 		if (isIdle && !isAttack1 && !isAttack2 && !isAttack3) {
 			character.setAnimation("idle");
-			character.speed = 18;
+			character.speed = 15;
 		}
 		if (isJumping) {
 			character.setAnimation("jump1");
@@ -225,8 +239,8 @@ public class Tanuki extends Entity {
 			character.speed = 15;
 		}
 		if (isAttack1) {
-			character.setAnimation("attack1");
-			character.speed = 30;
+			character.setAnimation("runAttack1");
+			character.speed = 10;
 		}
 		if (isAttack2) {
 			character.setAnimation("attack2");
@@ -258,6 +272,7 @@ public class Tanuki extends Entity {
 	}
 
 	public void handleInput() {
+
 		if (MyInput.isDown(MyInput.RIGHT)) {
 			if (body.getLinearVelocity().x <= 2.3f)
 				body.applyLinearImpulse(0.2f, 0, 0, 0, true);
@@ -296,7 +311,7 @@ public class Tanuki extends Entity {
 
 	@Override
 	public void render() {
-
+		characters.update();
+		drawer.draw(characters.getFirstPlayer());
 	}
-
 }

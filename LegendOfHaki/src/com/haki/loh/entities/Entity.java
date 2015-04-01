@@ -6,10 +6,11 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
 import com.haki.loh.gametates.GameState;
+import com.haki.loh.gametates.Play;
 import com.haki.loh.handlers.B2DVariables;
 
 public abstract class Entity {
-	protected GameState state;
+	protected Play play;
 	protected Body body;
 	protected World world;
 	protected final float PPM = B2DVariables.PPM;
@@ -37,8 +38,8 @@ public abstract class Entity {
 		this.removable = removable;
 	}
 
-	public Entity(GameState state) {
-		this.state = state;
+	public Entity(Play play) {
+		this.play = play;
 	}
 
 	public abstract void createBody();
