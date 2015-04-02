@@ -74,13 +74,10 @@ public class Tanuki extends Entity {
 		Data data = new SCMLReader(handle.read()).getData();
 		loader = new LibGdxLoader(data);
 		loader.load(handle.file());
-		characters = new PlayerTweener(data.getEntity(0));
-
-
-		character = Spriter.newPlayer("images/haki/Haki.scml", "Haki");
-		character.setScale(0.3f);
+		characters = new PlayerTweener(data.getEntity("Tanuki"));
+		characters.setScale(0.3f);
 		setListener();
-		character.addListener(listener);
+		characters.addListener(listener);
 	}
 
 	private void setListener() {
@@ -222,43 +219,77 @@ public class Tanuki extends Entity {
 	// File
 	public void setAnimation() {
 		if (isRun && !isAttack1 && !isAttack2 && !isAttack3) {
-			character.setAnimation("run");
-			character.speed = 15;
+			characters.getFirstPlayer().speed = 25;
+			characters.getSecondPlayer().speed = 25;
+			characters.baseBoneName = null;
+			characters.setBaseAnimation("run");
+			characters.getFirstPlayer().setAnimation("run");
+			characters.getSecondPlayer().setAnimation("run");
+			characters.setWeight(50f);
 
 		}
 		if (isIdle && !isAttack1 && !isAttack2 && !isAttack3) {
-			character.setAnimation("idle");
-			character.speed = 15;
+			characters.getFirstPlayer().speed = 20;
+			characters.getSecondPlayer().speed = 20;
+			characters.baseBoneName = null;
+			characters.setBaseAnimation("idle");
+			characters.getFirstPlayer().setAnimation("idle");
+			characters.getSecondPlayer().setAnimation("idle");
+			characters.setWeight(50f);
 		}
 		if (isJumping) {
-			character.setAnimation("jump1");
-			character.speed = 15;
+			characters.getFirstPlayer().speed = 20;
+			characters.getSecondPlayer().speed = 20;
+			characters.baseBoneName = null;
+			characters.setBaseAnimation("jump");
+			characters.getFirstPlayer().setAnimation("jump");
+			characters.getSecondPlayer().setAnimation("jump");
+			characters.setWeight(50f);
 		}
 		if (isFalling) {
-			character.setAnimation("falling");
-			character.speed = 15;
+			characters.getFirstPlayer().speed = 20;
+			characters.getSecondPlayer().speed = 20;
+			characters.baseBoneName = null;
+			characters.setBaseAnimation("falling");
+			characters.getFirstPlayer().setAnimation("falling");
+			characters.getSecondPlayer().setAnimation("falling");
+			characters.setWeight(50f);
 		}
-		if (isAttack1) {
-			character.setAnimation("runAttack1");
-			character.speed = 10;
+		if (isAttack1 && isRun) {
+			characters.getFirstPlayer().speed = 15;
+			characters.getSecondPlayer().speed = 25;
+			
+			characters.setBaseAnimation("run");
+			characters.getSecondPlayer().setAnimation("run");
+			characters.getFirstPlayer().setAnimation("run_attack1");
+			characters.baseBoneName = "collarbone";
+			characters.setWeight(0f);
+		}
+		if (isAttack1 && !isRun) {
+			characters.getFirstPlayer().speed = 15;
+			characters.getSecondPlayer().speed = 25;
+			
+			characters.setBaseAnimation("idle");
+			characters.getSecondPlayer().setAnimation("idle");
+			characters.getFirstPlayer().setAnimation("run_attack1");
+			characters.baseBoneName = "bupperarmbone";
+			characters.setWeight(0f);
 		}
 		if (isAttack2) {
-			character.setAnimation("attack2");
-			character.speed = 30;
+
 		}
 		if (isAttack3) {
-			character.setAnimation("attack3");
-			character.speed = 30;
+
 		}
 		if (isForward) {
-			if (character.flippedX() != 1)
-				character.flipX();
+			if (characters.flippedX() != 1)
+				characters.flipX();
 		} else {
-			if (character.flippedX() == 1)
-				character.flipX();
+			if (characters.flippedX() == 1)
+				characters.flipX();
 		}
-		character.setPosition(x * PPM, y * PPM - 17);
-		character.update();
+		characters.setPosition(x * PPM, y * PPM - 17);
+		characters.update();
 
 	}
 
@@ -311,7 +342,10 @@ public class Tanuki extends Entity {
 
 	@Override
 	public void render() {
-		characters.update();
-		drawer.draw(characters.getFirstPlayer());
+		drawer.draw(characters);
+		
+		// DRAW BONES
+		//drawer.drawBones(characters);
+
 	}
 }

@@ -149,6 +149,8 @@ public class Play extends GameState {
 		batch.setProjectionMatrix(camera.combined);
 
 		batch.begin();
+		renderer.setAutoShapeType(true);
+		renderer.begin();
 
 		if (renderArt) {
 			renderer.setProjectionMatrix(camera.combined);
@@ -167,7 +169,9 @@ public class Play extends GameState {
 					+ tanuki.getBody().getLinearVelocity().y, 0, 280);
 			debugText.draw(batch, "isGrounded: " + tanuki.isGrounded(), 0, 270);
 		}
+		renderer.end();
 		batch.end();
+		
 
 		if (debugMode) {
 			b2DCam.position.set(tanuki.getBody().getPosition().x + 30 / PPM,
