@@ -40,7 +40,7 @@ public class Tanuki extends Entity {
 	private long attack1Time = 0, attack2Time = 0, attack3Time = 0;
 
 	// Attack Delays
-	private long attack1Delay = 500, attack2Delay = 500, attack3Delay = 500;
+	private long attack1Delay = 650, attack2Delay = 500, attack3Delay = 500;
 	private float startingX, startingY;
 	private LibGdxDrawer drawer;
 
@@ -217,69 +217,37 @@ public class Tanuki extends Entity {
 	// Set the Spriter animation based on the character's current state,
 	// setAnimation(String) the String is the animation name on the Spriter SCML
 	// File
+	public void setAnimationDetails(int firstSpeed, int secondSpeed,
+			String baseBoneName, String baseAnimation, String firstAnimation,
+			String secondAnimation, float weight) {
+		characters.getFirstPlayer().speed = firstSpeed;
+		characters.getSecondPlayer().speed = secondSpeed;
+		characters.baseBoneName = baseBoneName;
+		characters.setBaseAnimation(baseAnimation);
+		characters.getFirstPlayer().setAnimation(firstAnimation);
+		characters.getSecondPlayer().setAnimation(secondAnimation);
+		characters.setWeight(weight);
+
+	}
+
 	public void setAnimation() {
 		if (isRun && !isAttack1 && !isAttack2 && !isAttack3) {
-			characters.getFirstPlayer().speed = 25;
-			characters.getSecondPlayer().speed = 25;
-			characters.baseBoneName = null;
-			characters.setBaseAnimation("run");
-			characters.getFirstPlayer().setAnimation("run");
-			characters.getSecondPlayer().setAnimation("run");
-			characters.setWeight(50f);
-
+			setAnimationDetails(15, 15, null, "run", "run", "run", 0.50f);
 		}
 		if (isIdle && !isAttack1 && !isAttack2 && !isAttack3) {
-			characters.getFirstPlayer().speed = 20;
-			characters.getSecondPlayer().speed = 20;
-			characters.baseBoneName = null;
-			characters.setBaseAnimation("idle");
-			characters.getFirstPlayer().setAnimation("idle");
-			characters.getSecondPlayer().setAnimation("idle");
-			characters.setWeight(50f);
+			setAnimationDetails(15, 15, null, "idle", "idle", "idle", 0.50f);
 		}
 		if (isJumping) {
-			characters.getFirstPlayer().speed = 20;
-			characters.getSecondPlayer().speed = 20;
-			characters.baseBoneName = null;
-			characters.setBaseAnimation("jump");
-			characters.getFirstPlayer().setAnimation("jump");
-			characters.getSecondPlayer().setAnimation("jump");
-			characters.setWeight(50f);
+			setAnimationDetails(15, 15, null, "jump", "jump", "jump", 0.50f);
 		}
 		if (isFalling) {
-			characters.getFirstPlayer().speed = 20;
-			characters.getSecondPlayer().speed = 20;
-			characters.baseBoneName = null;
-			characters.setBaseAnimation("falling");
-			characters.getFirstPlayer().setAnimation("falling");
-			characters.getSecondPlayer().setAnimation("falling");
-			characters.setWeight(50f);
+			setAnimationDetails(15, 15, null, "falling", "falling", "falling", 0.50f);
 		}
-		if (isAttack1 && isRun) {
-			characters.getFirstPlayer().speed = 15;
-			characters.getSecondPlayer().speed = 25;
-			
-			characters.setBaseAnimation("run");
-			characters.getSecondPlayer().setAnimation("run");
-			characters.getFirstPlayer().setAnimation("run_attack1");
-			characters.baseBoneName = "collarbone";
-			characters.setWeight(0f);
+		if (isAttack1 && isRun) { 
+			setAnimationDetails(15, 15, "torsobone", "run", "runAttack", "run", 0f);
 		}
 		if (isAttack1 && !isRun) {
-			characters.getFirstPlayer().speed = 15;
-			characters.getSecondPlayer().speed = 25;
-			
-			characters.setBaseAnimation("idle");
-			characters.getSecondPlayer().setAnimation("idle");
-			characters.getFirstPlayer().setAnimation("run_attack1");
-			characters.baseBoneName = "bupperarmbone";
-			characters.setWeight(0f);
-		}
-		if (isAttack2) {
-
-		}
-		if (isAttack3) {
-
+			setAnimationDetails(15, 4, "collarbone", "run", "runAttack", "run", 0f);
 		}
 		if (isForward) {
 			if (characters.flippedX() != 1)
@@ -343,9 +311,9 @@ public class Tanuki extends Entity {
 	@Override
 	public void render() {
 		drawer.draw(characters);
-		
+
 		// DRAW BONES
-		//drawer.drawBones(characters);
+		// drawer.drawBones(characters);
 
 	}
 }
