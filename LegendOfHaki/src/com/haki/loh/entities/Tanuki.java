@@ -16,13 +16,11 @@ import com.brashmonkey.spriter.Player;
 import com.brashmonkey.spriter.Player.PlayerListener;
 import com.brashmonkey.spriter.PlayerTweener;
 import com.brashmonkey.spriter.SCMLReader;
-import com.brashmonkey.spriter.Spriter;
 import com.haki.loh.gametates.Play;
 import com.haki.loh.handlers.MyInput;
 import com.haki.loh.handlers.SaveManager;
 
 public class Tanuki extends Entity {
-	private Player character;
 	private LibGdxLoader loader;
 
 	// this PlayerListener listens to the Spriter Class animation.
@@ -33,14 +31,14 @@ public class Tanuki extends Entity {
 	// There booleans determine whether the player States and it decides what
 	// animation
 	// should be played or what can or cannot happen
-	private boolean isBusy, isDirectionPressed, isRun, isIdle, isJumping,
-			isFalling, isAttack1, isAttack2, isAttack3;
+	private boolean isBusy, isDirectionPressed, leftPressed, rightPressed,
+			isRun, isIdle, isJumping, isFalling, isAttack1;
 
 	// Attack Timers
-	private long attack1Time = 0, attack2Time = 0, attack3Time = 0;
+	private long attack1Time = 0;
+	private long attack1Delay = 300;
+	private boolean attackRight;
 
-	// Attack Delays
-	private long attack1Delay = 650, attack2Delay = 500, attack3Delay = 500;
 	private float startingX, startingY;
 	private LibGdxDrawer drawer;
 
@@ -54,7 +52,6 @@ public class Tanuki extends Entity {
 		drawer = play.getDrawer();
 		FileHandle handle = Gdx.files.local("bin/savefile.json");
 		if (handle.exists()) {
-
 			SaveManager sm = new SaveManager(this);
 			sm.load();
 			startingX = sm.saveFile.startingX;
@@ -67,6 +64,7 @@ public class Tanuki extends Entity {
 		loadAssets();
 		createBody();
 		isForward = true;
+		changedDirection = false;
 	}
 
 	private void loadAssets() {
@@ -161,22 +159,9 @@ public class Tanuki extends Entity {
 			attack1Time = 0;
 			isAttack1 = false;
 		}
-		if (attack2Time != 0) {
-			isAttack2 = true;
-		}
-		if ((System.currentTimeMillis() - attack2Time) >= attack2Delay) {
-			attack2Time = 0;
-			isAttack2 = false;
-		}
-		if (attack3Time != 0) {
-			isAttack3 = true;
-		}
-		if ((System.currentTimeMillis() - attack3Time) >= attack3Delay) {
-			attack3Time = 0;
-			isAttack3 = false;
-		}
+
 		// check if Busy
-		if (isAttack1 || isAttack2 || isAttack3)
+		if (isAttack1)
 			isBusy = true;
 		else
 			isBusy = false;
@@ -231,23 +216,26 @@ public class Tanuki extends Entity {
 	}
 
 	public void setAnimation() {
-		if (isRun && !isAttack1 && !isAttack2 && !isAttack3) {
-			setAnimationDetails(15, 15, null, "run", "run", "run", 0.50f);
+		if (isRun && !isAttack1) {
+			setAnimationDetails(25, 25, null, "run", "run", "run", 0.50f);
 		}
-		if (isIdle && !isAttack1 && !isAttack2 && !isAttack3) {
+		if (isIdle && !isAttack1) {
 			setAnimationDetails(15, 15, null, "idle", "idle", "idle", 0.50f);
 		}
 		if (isJumping) {
 			setAnimationDetails(15, 15, null, "jump", "jump", "jump", 0.50f);
 		}
 		if (isFalling) {
-			setAnimationDetails(15, 15, null, "falling", "falling", "falling", 0.50f);
+			setAnimationDetails(15, 15, null, "falling", "falling", "falling",
+					0.50f);
 		}
-		if (isAttack1 && isRun) { 
-			setAnimationDetails(15, 15, "torsobone", "run", "runAttack", "run", 0f);
+		if (isAttack1 && isRun) {
+			setAnimationDetails(25, 15, "torsobone", "run", "runAttack", "run",
+					0f);
 		}
 		if (isAttack1 && !isRun) {
-			setAnimationDetails(15, 4, "collarbone", "run", "runAttack", "run", 0f);
+			setAnimationDetails(25, 0, "collarbone", "run", "runAttack", "run",
+					0f);
 		}
 		if (isForward) {
 			if (characters.flippedX() != 1)
@@ -271,41 +259,42 @@ public class Tanuki extends Entity {
 	}
 
 	public void handleInput() {
-
 		if (MyInput.isDown(MyInput.RIGHT)) {
-			if (body.getLinearVelocity().x <= 2.3f)
-				body.applyLinearImpulse(0.2f, 0, 0, 0, true);
+			if (!isAttack1 || (isAttack1 && attackRight)) {
+				if (body.getLinearVelocity().x <= 2.3f)
+					body.applyLinearImpulse(0.2f, 0, 0, 0, true);		
+			}
 			isDirectionPressed = true;
 		}
+		rightPressed = false;
 		if (MyInput.isDown(MyInput.LEFT)) {
-			if (body.getLinearVelocity().x >= -2.3f)
-				body.applyLinearImpulse(-0.2f, 0, 0, 0, true);
+			if(!isAttack1 || (isAttack1 && !attackRight)){
+				if (body.getLinearVelocity().x >= -2.3f)
+					body.applyLinearImpulse(-0.2f, 0, 0, 0, true);
+			}
+			
 			isDirectionPressed = true;
 		}
 		if (!MyInput.isDown(MyInput.RIGHT) && !MyInput.isDown(MyInput.LEFT)) {
 			isDirectionPressed = false;
+			leftPressed = false;
+			rightPressed = false;
 		}
+
 		if (MyInput.isPressed(MyInput.JUMP)) {
 			body.applyForceToCenter(0f, 250f, true);
 		}
 		if (MyInput.isPressed(MyInput.FIRE) && isGrounded) {
 			SaveManager sm = new SaveManager(this);
 			sm.save();
-			if (attack1Time == 0 && attack2Time == 0 && attack3Time == 0) {
+			if (attack1Time == 0) {
 				attack1Time = System.currentTimeMillis();
-			}
-			if ((System.currentTimeMillis() - attack1Time) >= 230
-					&& attack1Time != 0) {
-				attack1Time = 0;
-				attack2Time = System.currentTimeMillis();
-			}
-			if (attack2Time != 0
-					&& (System.currentTimeMillis() - attack2Time) >= 230) {
-				attack2Time = 0;
-				attack3Time = System.currentTimeMillis();
+				if (isForward)
+					attackRight = true;
+				else
+					attackRight = false;
 			}
 		}
-
 	}
 
 	@Override

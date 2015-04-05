@@ -19,7 +19,7 @@ public abstract class Entity {
 	protected float x, y, linearVelocityX, linearVelocityY;
 	protected TextureAtlas textureAtlas;
 	protected boolean removable = false;
-	protected boolean isGrounded, isForward;
+	protected boolean isGrounded, isForward, changedDirection;
 	
 
 	public boolean isGrounded() {
