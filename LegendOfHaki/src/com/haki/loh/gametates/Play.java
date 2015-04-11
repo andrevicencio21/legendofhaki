@@ -203,7 +203,7 @@ public class Play extends GameState {
 				BodyDef bd = new BodyDef();
 				bd.type = BodyType.StaticBody;
 				Body body2 = world.createBody(bd);
-				body2.createFixture(shape, 1).setFriction(0.7f);
+				body2.createFixture(shape, 1).setFriction(1f);
 				for (int i = 0; i < body2.getFixtureList().size; i++) {
 					body2.getFixtureList().get(i).setUserData("wall");
 				}
@@ -222,7 +222,7 @@ public class Play extends GameState {
 				BodyDef bd = new BodyDef();
 				bd.type = BodyType.StaticBody;
 				Body body2 = world.createBody(bd);
-				body2.createFixture(shape, 1).setFriction(0.7f);
+				body2.createFixture(shape, 1).setFriction(1f);
 				body2.getFixtureList().get(0).getShape();
 				for (int i = 0; i < body2.getFixtureList().size; i++) {
 					body2.getFixtureList().get(i).setUserData("wall");

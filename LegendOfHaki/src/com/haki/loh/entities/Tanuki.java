@@ -7,6 +7,7 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
+import com.badlogic.gdx.utils.TimeUtils;
 import com.brashmonkey.spriter.Animation;
 import com.brashmonkey.spriter.Data;
 import com.brashmonkey.spriter.LibGdxDrawer;
@@ -31,19 +32,23 @@ public class Tanuki extends Entity {
 	// There booleans determine whether the player States and it decides what
 	// animation
 	// should be played or what can or cannot happen
-	private boolean isBusy, isDirectionPressed, leftPressed, rightPressed,
-			isRun, isIdle, isJumping, isFalling, isAttack1;
+	private boolean busy, directionPressed, leftPressed, rightPressed,
+			jumpPressed, run, idle, jump, falling, attack1, attackRight;
 
-	// Attack Timers
+	// Timers
+
 	private long attack1Time = 0;
 	private long attack1Delay = 300;
-	private boolean attackRight;
+	private long landingDelay = 30;
+	private long jumpPressTime = 0;
+	private long rightPressTime = 0, leftPressTime = 0;
 
 	private float startingX, startingY;
 	private LibGdxDrawer drawer;
-
+    private Animation prepared;
 	// Interpolation variables
 	PlayerTweener characters;
+
 
 	public Tanuki(Play play) {
 		super(play);
@@ -65,6 +70,9 @@ public class Tanuki extends Entity {
 		createBody();
 		isForward = true;
 		changedDirection = false;
+	
+
+		
 	}
 
 	private void loadAssets() {
@@ -76,6 +84,8 @@ public class Tanuki extends Entity {
 		characters.setScale(0.3f);
 		setListener();
 		characters.addListener(listener);
+		prepared = data.getEntity("Tanuki").getAnimation("jumpLeft");
+		prepared.prepare();
 	}
 
 	private void setListener() {
@@ -153,49 +163,48 @@ public class Tanuki extends Entity {
 		}
 		// Check Attack States
 		if (attack1Time != 0) {
-			isAttack1 = true;
+			attack1 = true;
 		}
-		if ((System.currentTimeMillis() - attack1Time) >= attack1Delay) {
+		if ((TimeUtils.millis() - attack1Time) >= attack1Delay) {
 			attack1Time = 0;
-			isAttack1 = false;
+			attack1 = false;
 		}
 
 		// check if Busy
-		if (isAttack1)
-			isBusy = true;
+		if (attack1)
+			busy = true;
 		else
-			isBusy = false;
+			busy = false;
 
 		// Check isForward
-		if (isDirectionPressed) {
-			if (linearVelocityX > 0)
+		if (directionPressed) {
+			if(rightPressTime > leftPressTime){
 				isForward = true;
-			else if (linearVelocityX < 0)
+			}if(rightPressTime < leftPressTime){
 				isForward = false;
+			}
 		}
 		// Check Fallimg Jumping
 		if (!isGrounded) {
 			if (linearVelocityY > 0) {
-				isJumping = true;
-				isFalling = false;
+				jump = true;
+				falling = false;
 			} else if (linearVelocityY < 0) {
-				isJumping = false;
-				isFalling = true;
+				jump = false;
+				falling = true;
 			}
-		} else {
-			isJumping = false;
-			isFalling = false;
 		}
+	
 		// check Idle States
-		if (!isDirectionPressed && isGrounded) {
-			isIdle = true;
+		if (!directionPressed && isGrounded) {
+			idle = true;
 		} else
-			isIdle = false;
+			idle = false;
 		// Check Run States
-		if (isDirectionPressed && isGrounded)
-			isRun = true;
+		if (directionPressed && isGrounded)
+			run = true;
 		else
-			isRun = false;
+			run = false;
 
 	}
 
@@ -216,25 +225,32 @@ public class Tanuki extends Entity {
 	}
 
 	public void setAnimation() {
-		if (isRun && !isAttack1) {
-			setAnimationDetails(25, 25, null, "run", "run", "run", 0.50f);
+		if (run && !attack1 && isForward) {
+			setAnimationDetails(18, 18, null, "run", "run", "run", 0.50f);
 		}
-		if (isIdle && !isAttack1) {
+		if (run && !attack1 && !isForward) {
+			setAnimationDetails(18, 18, null, "runLeft", "runLeft", "runLeft", 0.50f);
+		}
+		if (idle && !attack1 && isForward) {
 			setAnimationDetails(15, 15, null, "idle", "idle", "idle", 0.50f);
 		}
-		if (isJumping) {
-			setAnimationDetails(15, 15, null, "jump", "jump", "jump", 0.50f);
+		if (idle && !attack1 && !isForward) {
+			setAnimationDetails(15, 15, null, "idleLeft", "idleLeft", "idleLeft", 0.50f);
 		}
-		if (isFalling) {
-			setAnimationDetails(15, 15, null, "falling", "falling", "falling",
-					0.50f);
+		if (jump && isForward) {
+			setAnimationDetails(15, 15, "swordbone", "jump", "jump", "jump", 0f);
 		}
-		if (isAttack1 && isRun) {
-			setAnimationDetails(25, 15, "torsobone", "run", "runAttack", "run",
+		if (jump && !isForward) {
+			setAnimationDetails(15, 15, "swordbone" , "jump", "jumpLeft", "jump", 0f);
+	
+	
+		}
+		if (attack1 && run) {
+			setAnimationDetails(15, 15, "torsobone", "run", "runAttack", "run",
 					0f);
 		}
-		if (isAttack1 && !isRun) {
-			setAnimationDetails(25, 0, "collarbone", "run", "runAttack", "run",
+		if (attack1 && !run) {
+			setAnimationDetails(15, 0, "collarbone", "run", "runAttack", "run",
 					0f);
 		}
 		if (isForward) {
@@ -252,6 +268,16 @@ public class Tanuki extends Entity {
 	@Override
 	public void update(float dt) {
 		super.update(dt);
+		if (jumpPressTime != 0) {
+			if (!jump) {
+				body.applyForceToCenter(0f, 250f, true);
+				jump = true;
+			}
+			if (TimeUtils.millis() - jumpPressTime > 10) {
+				jumpPressTime = 0;
+			}
+
+		}
 		handleInput();
 		setStates();
 		setAnimation();
@@ -260,35 +286,39 @@ public class Tanuki extends Entity {
 
 	public void handleInput() {
 		if (MyInput.isDown(MyInput.RIGHT)) {
-			if (!isAttack1 || (isAttack1 && attackRight)) {
+			if (!attack1 || (attack1 && attackRight)) {
 				if (body.getLinearVelocity().x <= 2.3f)
-					body.applyLinearImpulse(0.2f, 0, 0, 0, true);		
+					body.applyLinearImpulse(0.2f, 0, 0, 0, true);
 			}
-			isDirectionPressed = true;
+			rightPressTime = TimeUtils.millis();
+			directionPressed = true;
 		}
 		rightPressed = false;
 		if (MyInput.isDown(MyInput.LEFT)) {
-			if(!isAttack1 || (isAttack1 && !attackRight)){
+			if (!attack1 || (attack1 && !attackRight)) {
 				if (body.getLinearVelocity().x >= -2.3f)
 					body.applyLinearImpulse(-0.2f, 0, 0, 0, true);
 			}
-			
-			isDirectionPressed = true;
+			leftPressTime = TimeUtils.millis();
+			directionPressed = true;
 		}
 		if (!MyInput.isDown(MyInput.RIGHT) && !MyInput.isDown(MyInput.LEFT)) {
-			isDirectionPressed = false;
+			directionPressed = false;
 			leftPressed = false;
 			rightPressed = false;
 		}
 
 		if (MyInput.isPressed(MyInput.JUMP)) {
-			body.applyForceToCenter(0f, 250f, true);
+			jumpPressed = true;
+			jumpPressTime = TimeUtils.millis();
+		} else if (!MyInput.isDown(MyInput.JUMP)) {
+			jumpPressed = false;
 		}
 		if (MyInput.isPressed(MyInput.FIRE) && isGrounded) {
 			SaveManager sm = new SaveManager(this);
 			sm.save();
 			if (attack1Time == 0) {
-				attack1Time = System.currentTimeMillis();
+				attack1Time = TimeUtils.millis();
 				if (isForward)
 					attackRight = true;
 				else

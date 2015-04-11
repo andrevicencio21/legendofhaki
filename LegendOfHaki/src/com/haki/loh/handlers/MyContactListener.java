@@ -13,14 +13,15 @@ public class MyContactListener implements ContactListener {
 	public int numFootContacts;
 	private Array<Entity> bodiesToRemove;
 	private Kunai kunaiHitWall;
+	public Fixture fa, fb;
 
 	public MyContactListener() {
 		bodiesToRemove = new Array<Entity>();
 	}
 
 	public void beginContact(Contact c) {
-		Fixture fa = c.getFixtureA();
-		Fixture fb = c.getFixtureB();
+		fa = c.getFixtureA();
+		fb = c.getFixtureB();
 		if (fa == null || fb == null)
 			return;
 		if (fa.getUserData() != null && fa.getUserData().equals("playerFoot")
@@ -49,8 +50,8 @@ public class MyContactListener implements ContactListener {
 
 	@Override
 	public void endContact(Contact c) {
-		Fixture fa = c.getFixtureA();
-		Fixture fb = c.getFixtureB();
+		fa = c.getFixtureA();
+		fb = c.getFixtureB();
 		if (fa == null || fb == null)
 			return;
 
