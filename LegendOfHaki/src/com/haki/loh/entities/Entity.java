@@ -19,15 +19,15 @@ public abstract class Entity {
 	protected float x, y, linearVelocityX, linearVelocityY;
 	protected TextureAtlas textureAtlas;
 	protected boolean removable = false;
-	protected boolean isGrounded, isForward, changedDirection;
+	protected boolean grounded, forward, changedDirection;
 	
 
 	public boolean isGrounded() {
-		return isGrounded;
+		return grounded;
 	}
 
 	public void setGrounded(boolean isGrounded) {
-		this.isGrounded = isGrounded;
+		this.grounded = isGrounded;
 	}
 
 	public boolean isRemovable() {

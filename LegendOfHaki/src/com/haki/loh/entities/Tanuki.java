@@ -33,7 +33,8 @@ public class Tanuki extends Entity {
 	// animation
 	// should be played or what can or cannot happen
 	private boolean busy, directionPressed, leftPressed, rightPressed,
-			jumpPressed, run, idle, jump, falling, attack1, attackRight;
+			jumpApplied = false, jumpPressed, run, idle, jump, falling,
+			attack1, attackRight;
 
 	// Timers
 
@@ -45,10 +46,9 @@ public class Tanuki extends Entity {
 
 	private float startingX, startingY;
 	private LibGdxDrawer drawer;
-    private Animation prepared;
+	private Animation prepared;
 	// Interpolation variables
 	PlayerTweener characters;
-
 
 	public Tanuki(Play play) {
 		super(play);
@@ -68,11 +68,9 @@ public class Tanuki extends Entity {
 		}
 		loadAssets();
 		createBody();
-		isForward = true;
+		forward = true;
 		changedDirection = false;
-	
 
-		
 	}
 
 	private void loadAssets() {
@@ -155,11 +153,23 @@ public class Tanuki extends Entity {
 	// varaibles and other conditions
 	// then determines the correct state of the player.
 	public void setStates() {
+		if (grounded) {
+			if (jumpPressTime != 0) {
+				if (!jumpApplied) {
+					body.applyForceToCenter(0f, 250f, true);
+					jumpApplied = true;
+				}
+			}
+		} else if (!grounded) {
+			if (jumpApplied) {
+				jump = true;
+			}
+		}
 		// check isGrounded
 		if (play.getMyContactListener().numFootContacts > 0) {
-			isGrounded = true;
+			grounded = true;
 		} else if (play.getMyContactListener().numFootContacts == 0) {
-			isGrounded = false;
+			grounded = false;
 		}
 		// Check Attack States
 		if (attack1Time != 0) {
@@ -178,30 +188,31 @@ public class Tanuki extends Entity {
 
 		// Check isForward
 		if (directionPressed) {
-			if(rightPressTime > leftPressTime){
-				isForward = true;
-			}if(rightPressTime < leftPressTime){
-				isForward = false;
+			if (rightPressTime > leftPressTime) {
+				forward = true;
+			}
+			if (rightPressTime < leftPressTime) {
+				forward = false;
 			}
 		}
-		// Check Fallimg Jumping
-		if (!isGrounded) {
-			if (linearVelocityY > 0) {
-				jump = true;
-				falling = false;
-			} else if (linearVelocityY < 0) {
-				jump = false;
-				falling = true;
-			}
-		}
-	
+		// // Check Fallimg Jumping
+		// if (!isGrounded) {
+		// if (linearVelocityY > 0) {
+		// jump = true;
+		// falling = false;
+		// } else if (linearVelocityY < 0) {
+		// jump = false;
+		// falling = true;
+		// }
+		// }
+
 		// check Idle States
-		if (!directionPressed && isGrounded) {
+		if (!directionPressed && grounded) {
 			idle = true;
 		} else
 			idle = false;
 		// Check Run States
-		if (directionPressed && isGrounded)
+		if (directionPressed && grounded)
 			run = true;
 		else
 			run = false;
@@ -225,25 +236,27 @@ public class Tanuki extends Entity {
 	}
 
 	public void setAnimation() {
-		if (run && !attack1 && isForward) {
+		if (run && !attack1 && forward) {
 			setAnimationDetails(18, 18, null, "run", "run", "run", 0.50f);
 		}
-		if (run && !attack1 && !isForward) {
-			setAnimationDetails(18, 18, null, "runLeft", "runLeft", "runLeft", 0.50f);
+		if (run && !attack1 && !forward) {
+			setAnimationDetails(18, 18, null, "runLeft", "runLeft", "runLeft",
+					0.50f);
 		}
-		if (idle && !attack1 && isForward) {
+		if (idle && !attack1 && forward) {
 			setAnimationDetails(15, 15, null, "idle", "idle", "idle", 0.50f);
 		}
-		if (idle && !attack1 && !isForward) {
-			setAnimationDetails(15, 15, null, "idleLeft", "idleLeft", "idleLeft", 0.50f);
+		if (idle && !attack1 && !forward) {
+			setAnimationDetails(15, 15, null, "idleLeft", "idleLeft",
+					"idleLeft", 0.50f);
 		}
-		if (jump && isForward) {
+		if (jump && forward) {
 			setAnimationDetails(15, 15, "swordbone", "jump", "jump", "jump", 0f);
 		}
-		if (jump && !isForward) {
-			setAnimationDetails(15, 15, "swordbone" , "jump", "jumpLeft", "jump", 0f);
-	
-	
+		if (jump && !forward) {
+			setAnimationDetails(15, 15, "swordbone", "jump", "jumpLeft",
+					"jump", 0f);
+
 		}
 		if (attack1 && run) {
 			setAnimationDetails(15, 15, "torsobone", "run", "runAttack", "run",
@@ -253,7 +266,7 @@ public class Tanuki extends Entity {
 			setAnimationDetails(15, 0, "collarbone", "run", "runAttack", "run",
 					0f);
 		}
-		if (isForward) {
+		if (forward) {
 			if (characters.flippedX() != 1)
 				characters.flipX();
 		} else {
@@ -268,16 +281,7 @@ public class Tanuki extends Entity {
 	@Override
 	public void update(float dt) {
 		super.update(dt);
-		if (jumpPressTime != 0) {
-			if (!jump) {
-				body.applyForceToCenter(0f, 250f, true);
-				jump = true;
-			}
-			if (TimeUtils.millis() - jumpPressTime > 10) {
-				jumpPressTime = 0;
-			}
 
-		}
 		handleInput();
 		setStates();
 		setAnimation();
@@ -314,12 +318,12 @@ public class Tanuki extends Entity {
 		} else if (!MyInput.isDown(MyInput.JUMP)) {
 			jumpPressed = false;
 		}
-		if (MyInput.isPressed(MyInput.FIRE) && isGrounded) {
+		if (MyInput.isPressed(MyInput.FIRE) && grounded) {
 			SaveManager sm = new SaveManager(this);
 			sm.save();
 			if (attack1Time == 0) {
 				attack1Time = TimeUtils.millis();
-				if (isForward)
+				if (forward)
 					attackRight = true;
 				else
 					attackRight = false;
