@@ -43,6 +43,7 @@ public class Tanuki extends Entity {
 	private long landingDelay = 30;
 	private long jumpPressTime = 0;
 	private long rightPressTime = 0, leftPressTime = 0;
+	private long jumpTime = 0;
 
 	private float startingX, startingY;
 	private LibGdxDrawer drawer;
@@ -153,18 +154,20 @@ public class Tanuki extends Entity {
 	// varaibles and other conditions
 	// then determines the correct state of the player.
 	public void setStates() {
-		if (grounded) {
-			if (jumpPressTime != 0) {
-				if (!jumpApplied) {
-					body.applyForceToCenter(0f, 250f, true);
-					jumpApplied = true;
-				}
-			}
-		} else if (!grounded) {
-			if (jumpApplied) {
-				jump = true;
-			}
+
+		if (jumpPressed && !jumpApplied && grounded) {
+			body.applyForceToCenter(0f, 250f, true);
+			jumpApplied = true;
+			jump = true;
+			jumpTime = TimeUtils.millis();
 		}
+		if(jump && TimeUtils.millis() - jumpTime > 100 && grounded){
+			jump = false;
+			jumpTime = 0;
+			jumpPressTime = 0;
+			jumpApplied = false;
+		}
+
 		// check isGrounded
 		if (play.getMyContactListener().numFootContacts > 0) {
 			grounded = true;
@@ -194,8 +197,7 @@ public class Tanuki extends Entity {
 			if (rightPressTime < leftPressTime) {
 				forward = false;
 			}
-		}
-		// // Check Fallimg Jumping
+		}	// // Check Fallimg Jumping
 		// if (!isGrounded) {
 		// if (linearVelocityY > 0) {
 		// jump = true;
